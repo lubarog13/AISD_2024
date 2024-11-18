@@ -50,7 +50,7 @@ function insertionSort(array) {
 }
 function bubbleSort(array) {
     for (let i = 0; i < array.length; i++) {
-        for (let j = 0; j < array.length; j++) {
+        for (let j = 0; j < array.length - i - 1; j++) {
             if (array[j] > array[j + 1]) {
                 [array[j], array[j + 1]] = [array[j + 1], array[j]];
             }
@@ -84,13 +84,14 @@ function merge(left, right) {
     return result.concat(left.slice(l)).concat(right.slice(r));
 }
 function shellSort(array, gapArr) {
-    var n = array.length;
+    const n = array.length;
     for (let gap of gapArr) {
         for (let i = gap; i < n; i++) {
-            var temp = array[i];
-            var j;
-            for (j = i; j >= gap && array[j - gap] > temp; j -= gap)
+            let temp = array[i];
+            let j;
+            for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
                 array[j] = array[j - gap];
+            }
             array[j] = temp;
         }
     }
@@ -171,6 +172,7 @@ function heapSort(array) {
         makeHeap(array, j, 0);
         j--;
     }
+    return array;
 }
 function makeHeap(array, size, i) {
     let max = i;

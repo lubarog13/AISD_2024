@@ -37,7 +37,7 @@ export function insertionSort(array: number[]): number[] {
 
 export function bubbleSort(array: number[]): number[] {
   for (let i = 0; i < array.length; i++) {
-    for (let j = 0; j < array.length; j++) {
+    for (let j = 0; j < array.length - i - 1; j++) {
       if (array[j] > array[j + 1]) {
         [array[j], array[j + 1]] = [array[j + 1], array[j]];
       }
@@ -76,15 +76,15 @@ export function merge(left: number[], right: number[]): number[] {
 }
 
 export function shellSort(array: number[], gapArr: number[]): number[] {
-  var n = array.length;
+  const n = array.length;
 
   for (let gap of gapArr) {
     for (let i = gap; i < n; i++) {
-      var temp = array[i];
-      var j;
-      for (j = i; j >= gap && array[j - gap] > temp; j -= gap)
+      let temp = array[i];
+      let j;
+      for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
         array[j] = array[j - gap];
-
+      }
       array[j] = temp;
     }
   }
@@ -173,6 +173,7 @@ export function heapSort(array: number[]) {
     makeHeap(array, j, 0);
     j--;
   }
+  return array
 }
 
 export function makeHeap(array: number[], size: number, i: number) {

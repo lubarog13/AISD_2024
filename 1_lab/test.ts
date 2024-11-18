@@ -1,5 +1,5 @@
 import {
-  generateRanomArray,
+  generateRandomArray,
   reversedArray,
   semiSortedArray,
   sortedArray,

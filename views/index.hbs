@@ -24,15 +24,14 @@
       <main class="pt-5">
     <div class="container">
         <h1 class="mt-5 mb-4">Анализ алгоритмов сортировки</h1>
-        <h3>Исходные массивы:</h3>
-        <h5><b>Отсортированный массив</b>:</h5>
-        <p>[{{sortedArray}}]</p>
-        <h5><b>Почти отсортированный массив</b>:</h5>
-        <p>[{{semiSortedArray}}]</p>
-        <h5><b>Отсортированный в обратном порядке массив</b>: </h5>
-        <p>[{{reversedArray}}]</p>
-        <h5><b>Случайный массив</b>: </h5>
-        <p>[{{randomArray}}]</p>
+      <div class="row">
+        <ul class="list-group">
+          <li class="list-group-item"><b>Самая быстрая сортировка на отортированном массиве:</b> {{fastest_results.[0].name}}</li>
+          <li class="list-group-item"><b>Самая быстрая сортировка на почти отортированном массиве:</b> {{fastest_results.[1].name}}</li>
+          <li class="list-group-item"><b>Самая быстрая сортировка на отортированном в обратном порядке массиве:</b> {{fastest_results.[2].name}}</li>
+          <li class="list-group-item"><b>Самая быстрая сортировка на случайном массиве:</b> {{fastest_results.[3].name}}</li>
+        </ul>
+      </div>
     <div class="row">
       <div class="col-sm">
           <h2>График работы алгоритмов с квадратичной ассимптотикой</h2>
@@ -142,6 +141,15 @@
       <p class="card-text">Для случайного массива время работы {{pratt_result.[3]}}мс.</p>
                 </div></div></div>
         </div>
+      <h3>Исходные массивы:</h3>
+      <h5><b>Отсортированный массив</b>:</h5>
+      <p class="array">[{{sortedArray}}]</p>
+      <h5><b>Почти отсортированный массив</b>:</h5>
+      <p class="array">[{{semiSortedArray}}]</p>
+      <h5><b>Отсортированный в обратном порядке массив</b>: </h5>
+      <p class="array">[{{reversedArray}}]</p>
+      <h5><b>Случайный массив</b>: </h5>
+      <p class="array">[{{randomArray}}]</p>
     </div>
       </main>
   </body>
@@ -235,5 +243,12 @@
   .row {
       margin-bottom: 20px;
   }
+    .array {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
   </style>
 </html>
