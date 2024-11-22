@@ -159,7 +159,7 @@
     new Chart(ctx1, {
         type: 'line',
         data: {
-          labels: ['selectionSort', 'bubbleSort', 'insertionSort', 'shellSort1'],
+          labels: ['Выборкой', 'Пузырьком', 'Вставками', 'Шелла'],
           datasets: [{
           label: 'Результат для отсортированного массива',
               data: [{{selection_result.[0]}}, {{bubble_result.[0]}}, {{insertion_result.[0]}}, {{shell_result.[0]}}],
@@ -201,7 +201,7 @@
       new Chart(ctx2, {
           type: 'line',
           data: {
-            labels: ['mergeSort', 'quickSort', 'heapSort', 'shellSort2', 'shellSort3'],
+            labels: ['Слиянием', 'Быстрая', 'Пирамидальная', 'Шелла (Хиббард)', 'Шелла (Пратт)'],
             datasets: [{
             label: 'Результат для отсортированного массива',
                 data: [{{merge_result.[0]}}, {{quick_result.[0]}}, {{heap_result.[0]}}, {{hibbard_result.[0]}}, {{pratt_result.[0]}}],
