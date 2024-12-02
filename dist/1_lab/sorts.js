@@ -95,6 +95,7 @@ function shellSort(array, gapArr) {
             array[j] = temp;
         }
     }
+    console.log(array);
     return array;
 }
 function generateShell(max) {
@@ -109,6 +110,7 @@ function generateShell(max) {
         i++;
     }
     array.pop();
+    array.sort((a, b) => b - a);
     return array;
 }
 function generatePratt(max) {
@@ -122,7 +124,7 @@ function generatePratt(max) {
         }
         pow3 = pow3 * 3;
     }
-    array.sort((a, b) => a - b);
+    array.sort((a, b) => b - a);
     return array;
 }
 function generateHibbard(max) {
@@ -137,6 +139,7 @@ function generateHibbard(max) {
         array.push(2 ** i - 1);
     }
     array.pop();
+    array.sort((a, b) => b - a);
     return array;
 }
 function quickSort(array) {

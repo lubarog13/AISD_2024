@@ -88,6 +88,7 @@ export function shellSort(array: number[], gapArr: number[]): number[] {
       array[j] = temp;
     }
   }
+  console.log(array)
   return array;
 }
 
@@ -103,6 +104,8 @@ export function generateShell(max: number): number[] {
     i++;
   }
   array.pop()
+  array.sort((a, b) => b-a);
+
   return array;
 }
 export function generatePratt(max: number): number[] {
@@ -116,7 +119,7 @@ export function generatePratt(max: number): number[] {
     }
     pow3 = pow3 * 3
   }
-  array.sort((a, b) => a-b);
+  array.sort((a, b) => b-a);
   return array
 }
 
@@ -131,7 +134,8 @@ export function generateHibbard(max: number): number[] {
     i++;
     array.push(2**i - 1);
   }
-  array.pop()
+  array.pop();
+  array.sort((a, b) => b-a);
   return array;
 }
 
