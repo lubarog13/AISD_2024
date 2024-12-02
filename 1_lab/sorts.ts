@@ -92,51 +92,46 @@ export function shellSort(array: number[], gapArr: number[]): number[] {
 }
 
 export function generateShell(max: number): number[] {
-  let array: number[] = [];
-  let i = 0,
-    current = 0;
-  let j = 1;
-  while (current <= max / 2) {
-    current = i + j;
-    array.push(current);
-    i = j;
-    j = current;
+  let array: number[] = [1];
+  let i = 0;
+  while (array[i] <= max) {
+    if (array[i] >= max) {
+      array.pop()
+      return array;
+    }
+    array.push(2*array[i] + 1);
+    i++;
   }
+  array.pop()
   return array;
 }
 export function generatePratt(max: number): number[] {
-  let i1 = 0,
-    i2 = 0;
-  let array: number[] = [1];
-  for (let i = 1; i < max; ++i) {
-    if (array[i1] * 2 < array[i2] * 3) {
-      array[i] = array[i1] * 2;
-      i1++;
-    } else if (array[i1] * 2 > array[i2] * 3) {
-      array[i] = array[i2] * 3;
-      i2++;
-    } else {
-      array[i] = array[i1] * 2;
-      i1++;
-      i2++;
+  let array = []
+  let pow3 = 1 
+  while (pow3 <= max) {
+    let pow2 = pow3
+    while (pow2 <= max) {
+      array.push(pow2)
+      pow2 = pow2 * 2
     }
-    if (array[i] > max / 2) {
-      return array;
-    }
+    pow3 = pow3 * 3
   }
-  return array;
+  array.sort((a, b) => a-b);
+  return array
 }
 
 export function generateHibbard(max: number): number[] {
   let array: number[] = [1];
   let i = 1;
-  while (i <= max / 2) {
-    if (i >= max / 2) {
+  while (array[i-1] <= max) {
+    if (array[i-1] >= max) {
+      array.pop()
       return array;
     }
-    i *= 2;
-    array.push(i);
+    i++;
+    array.push(2**i - 1);
   }
+  array.pop()
   return array;
 }
 
