@@ -88,7 +88,6 @@ export function shellSort(array: number[], gapArr: number[]): number[] {
       array[j] = temp;
     }
   }
-  console.log(array)
   return array;
 }
 

@@ -95,7 +95,6 @@ function shellSort(array, gapArr) {
             array[j] = temp;
         }
     }
-    console.log(array);
     return array;
 }
 function generateShell(max) {
