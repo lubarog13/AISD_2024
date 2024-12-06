@@ -37,6 +37,8 @@
           <h2>График работы алгоритмов с квадратичной ассимптотикой</h2>
       <canvas id="quadroSort"></canvas>
       </div>
+    </div>
+        <div class="row">
       <div class="col-sm">
           <h2>График работы алгоритмов с неквадратичной ассимптотикой</h2>
       <canvas id="nonQuadroSort"></canvas>
@@ -46,7 +48,7 @@
         <div class="col-sm">
             <div class="card">
                 <div class="card-body">
-      <h4 class="card-title">Сортировка выбором</h4>
+      <a class="card-title" href="/selection/">Сортировка выбором</a>
       <p class="card-text">Для отсортированного массива время работы {{selection_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{selection_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{selection_result.[2]}}мс.</p>
@@ -57,7 +59,7 @@
         <div class="col-sm">
                 <div class="card">
                     <div class="card-body">
-          <h4 class="card-title">Сортировка пузырьком</h4>
+          <a class="card-title" href="/bubble/">Сортировка пузырьком</a>
       <p class="card-text">Для отсортированного массива время работы {{bubble_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{bubble_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{bubble_result.[2]}}мс.</p>
@@ -68,7 +70,7 @@
         <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                  <h4 class="card-title">Сортировка вставкой</h4>
+                  <a class="card-title" href="/insertion/">Сортировка вставкой</a>
       <p class="card-text">Для отсортированного массива время работы {{insertion_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{insertion_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{insertion_result.[2]}}мс.</p>
@@ -81,7 +83,7 @@
         <div class="col-sm">
                     <div class="card">
                         <div class="card-body">
-              <h4 class="card-title">Сортировка слиянием</h4>
+              <a class="card-title" href="/merge/">Сортировка слиянием</a>
       <p class="card-text">Для отсортированного массива время работы {{merge_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{merge_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{merge_result.[2]}}мс.</p>
@@ -92,7 +94,7 @@
         <div class="col-sm">
                     <div class="card">
                         <div class="card-body">
-              <h4 class="card-title">Быстрая сортировка</h4>
+              <a class="card-title" href="/quick/">Быстрая сортировка</a>
       <p class="card-text">Для отсортированного массива время работы {{quick_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{quick_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{quick_result.[2]}}мс.</p>
@@ -103,7 +105,7 @@
         <div class="col-sm">
                     <div class="card">
                         <div class="card-body">
-              <h4 class="card-title">Пирамидальная сортировка</h4>
+              <a class="card-title" href="/heap/">Пирамидальная сортировка</a>
       <p class="card-text">Для отсортированного массива время работы {{heap_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{heap_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{heap_result.[2]}}мс.</p>
@@ -116,7 +118,7 @@
             <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                  <h4 class="card-title">Сортировка Шелла</h4>
+                  <a class="card-title" href="/shell/">Сортировка Шелла</a>
       <p class="card-text">Для отсортированного массива время работы {{shell_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{shell_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{shell_result.[2]}}мс.</p>
@@ -125,7 +127,7 @@
             <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                  <h4 class="card-title">Сортировка Шелла (Последовательность Хиббарда)</h4>
+                  <a class="card-title" href="/hibbard/">Сортировка Шелла (Последовательность Хиббарда)</a>
       <p class="card-text">Для отсортированного массива время работы {{hibbard_result.[0]}}мс.</p>
       <p class="card-text" >Для почти отсортированного массива время работы {{hibbard_result.[1]}}мс.</p>
       <p class="card-text">Для отсортированного в обратном порядке массива время работы {{hibbard_result.[2]}}мс.</p>
@@ -134,7 +136,7 @@
             <div class="col-sm">
                         <div class="card">
                             <div class="card-body">
-                  <h4 class="card-title">Сортировка Шелла (Последовательность Пратта)</h4>
+                  <a class="card-title" href="/pratt/">Сортировка Шелла (Последовательность Пратта)</a>
       <p class="card-text">Для отсортированного массива время работы {{pratt_result.[0]}}мс.</p>
       <p class="card-text">Для почти отсортированного массива время работы {{pratt_result.[1]}}мс.</p>
       <p class="card-text" >Для отсортированного в обратном порядке массива время работы {{pratt_result.[2]}}мс.</p>
@@ -159,84 +161,111 @@
     new Chart(ctx1, {
         type: 'line',
         data: {
-          labels: ['Выборкой', 'Пузырьком', 'Вставками', 'Шелла'],
+          labels: [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
           datasets: [{
-          label: 'Результат для отсортированного массива',
-              data: [{{selection_result.[0]}}, {{bubble_result.[0]}}, {{insertion_result.[0]}}, {{shell_result.[0]}}],
+          label: 'Сортировка выборкой',
+              data: [{{quadroResults.[0]}}],
               fill: false,
               borderColor: 'rgb(255, 192, 192)',
               tension: 0.[1]
           },
           {
-          label: 'Результат для почти отсортированного массива',
-          data: [{{selection_result.[1]}}, {{bubble_result.[1]}}, {{insertion_result.[1]}}, {{shell_result.[1]}}],
+              label: 'Сортировка пузырьком',
+          data: [{{quadroResults.[1]}}],
               fill: false,
               borderColor: 'rgb(255, 255, 192)',
               tension: 0.[1]
           },{
-          label: 'Результат для отсортированного в обратном порядке массива',
-              data: [{{selection_result.[2]}}, {{bubble_result.[2]}}, {{insertion_result.[2]}}, {{shell_result.[2]}}],
+                  label: 'Сортировка вставкой',
+              data: [{{quadroResults.[2]}}],
               fill: false,
               borderColor: 'rgb(255, 192, 255)',
               tension: 0.[1]
           },
 
-          {label: 'Результат для случайного массива',
-              data: [{{selection_result.[3]}}, {{bubble_result.[3]}}, {{insertion_result.[3]}}, {{shell_result.[3]}}],
+              {label: 'Сортировка Шелла (последовательность Шелла)',
+              data: [{{quadroResults.[3]}}],
               fill: false,
               borderColor: 'rgb(75, 192, 192)',
               tension: 0.[1]
           }]
         },
         options: {
-          scales: {
-            y: {
-              beginAtZero: true
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Время, мс'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Количество элементов'
+                    }
+                }
             }
-          }
         }
       });
       const ctx2 = document.getElementById('nonQuadroSort');
 
       new Chart(ctx2, {
-          
+
           type: 'line',
           data: {
-            labels: ['Слиянием', 'Быстрая', 'Пирамидальная', 'Шелла (Хиббард)', 'Шелла (Пратт)'],
-            datasets: [{
-            label: 'Результат для отсортированного массива',
-                data: [{{merge_result.[0]}}, {{quick_result.[0]}}, {{heap_result.[0]}}, {{hibbard_result.[0]}}, {{pratt_result.[0]}}],
-                fill: false,
-                borderColor: 'rgb(255, 192, 192)',
-                tension: 0.[1]
-            },
-            {
-            label: 'Результат для почти отсортированного массива',
-            data: [{{merge_result.[1]}}, {{quick_result.[1]}}, {{heap_result.[1]}}, {{hibbard_result.[1]}}, {{pratt_result.[1]}}],
-                fill: false,
-                borderColor: 'rgb(255, 255, 192)',
-                tension: 0.[1]
-            },{
-            label: 'Результат для отсортированного в обратном порядке массива',
-            data: [{{merge_result.[2]}}, {{quick_result.[2]}}, {{heap_result.[2]}}, {{hibbard_result.[2]}}, {{pratt_result.[2]}}],
-                fill: false,
-                borderColor: 'rgb(255, 192, 255)',
-                tension: 0.[1]
-            },
+              labels: [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000],
+              datasets: [{
+                  label: 'Сортировка слиянием',
+                  data: [{{nonQuadroResults.[0]}}],
+                  fill: false,
+                  borderColor: 'rgb(255, 192, 192)',
+                  tension: 0.[1]
+              },
+                  {
+                      label: 'Быстрая сортировка',
+                      data: [{{nonQuadroResults.[1]}}],
+                      fill: false,
+                      borderColor: 'rgb(255, 255, 192)',
+                      tension: 0.[1]
+                  },{
+                      label: 'Сортировка Шелла (последовательность Хиббарда)',
+                      data: [{{nonQuadroResults.[2]}}],
+                      fill: false,
+                      borderColor: 'rgb(255, 192, 255)',
+                      tension: 0.[1]
+                  },
 
-            {label: 'Результат для случайного массива',
-            data: [{{merge_result.[3]}}, {{quick_result.[3]}}, {{heap_result.[3]}}, {{hibbard_result.[3]}}, {{pratt_result.[3]}}],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.[1]
-            }]
+                  {label: 'Сортировка Шелла (последовательность Пратта)',
+                      data: [{{nonQuadroResults.[3]}}],
+                      fill: false,
+                      borderColor: 'rgb(75, 192, 192)',
+                      tension: 0.[1]
+                  },
+
+                  {label: 'Пирамидальная сортировка',
+                      data: [{{nonQuadroResults.[4]}}],
+                      fill: false,
+                      borderColor: 'rgb(97,9,26)',
+                      tension: 0.[1]
+                  }]
           },
           options: {
-            scales: {
-              y: {
-                beginAtZero: true
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      title: {
+                          display: true,
+                          text: 'Время, мс'
+                      }
+                  },
+                  x: {
+                      title: {
+                          display: true,
+                          text: 'Количество элементов'
+                      }
+                  }
               }
-            }
           }
         });
   </script>
@@ -251,5 +280,14 @@
       line-clamp: 2;
       -webkit-box-orient: vertical;
     }
+      .card-title {
+          text-decoration: underline;
+          cursor: pointer;
+          color: black;
+          font-size: 1.4rem;
+      }
+      .card-title:hover {
+          opacity: 0.7;
+      }
   </style>
 </html>

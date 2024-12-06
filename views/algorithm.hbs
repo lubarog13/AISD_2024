@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Алгоритмы сортировки</title>
+  </head>
+  <body>
+   <nav class="navbar fixed-top navbar-dark bg-dark">
+  <a class="navbar-brand mr-auto" href="/">АИСД ЛР1</a>
+   <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Рогозина Л.А. 2321 </a>
+      </li>
+    </ul>
+</nav>
+      <main class="pt-5">
+    <div class="container">
+        <h1 class="mt-5 mb-4">Анализ алгоритма {{name}}</h1>
+    <div class="row">
+      <div class="col-sm">
+          <h2>График работы алгоритма</h2>
+      <canvas id="sort"></canvas>
+      </div>
+    </div>
+    </div>
+      </main>
+  </body>
+  <script>
+    const ctx1 = document.getElementById('sort');
+
+    new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000],
+          datasets: [{
+          label: 'Результат для отсортированного массива',
+              data: [{{selection_result.[sorted]}}],
+              fill: false,
+              borderColor: 'rgb(255, 192, 192)',
+              tension: 0.[1]
+          },
+          {
+          label: 'Результат для почти отсортированного массива',
+              data: [{{selection_result.[semiSorted]}}],
+              fill: false,
+              borderColor: 'rgb(255, 255, 192)',
+              tension: 0.[1]
+          },{
+          label: 'Результат для отсортированного в обратном порядке массива',
+                  data: [{{selection_result.[reverseSorted]}}],
+              fill: false,
+              borderColor: 'rgb(255, 192, 255)',
+              tension: 0.[1]
+          },
+
+          {label: 'Результат для случайного массива',
+              data: [{{selection_result.[randomSorted]}}],
+              fill: false,
+              borderColor: 'rgb(75, 192, 192)',
+              tension: 0.[1]
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                  display: true,
+                  text: 'Время, мс'
+              }
+            },
+              x: {
+              title: {
+                  display: true,
+                  text: 'Количество элементов'
+              }
+            }
+          }
+        }
+      });
+  </script>
+  <style>
+  .row {
+      margin-bottom: 20px;
+  }
+    .array {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  </style>
+</html>

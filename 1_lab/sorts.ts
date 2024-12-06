@@ -143,7 +143,7 @@ export function quickSort(array: number[]): number[] {
     return array;
   }
 
-  const current = array[array.length - 1];
+  const current = array[array.length / 2];
 
   const left: number[] = [];
   const right: number[] = [];

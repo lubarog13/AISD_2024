@@ -1,36 +1,36 @@
-const len = 3000
-function generateSortedArray(): number[] {
+const len = 10000
+function generateSortedArray(length = len): number[] {
   let arr = [-1000];
-  for (let i = 1; i < len+1; i++) {
+  for (let i = 1; i < length+1; i++) {
     arr.push(Math.round(arr[i-1] + Math.round(Math.random()*5)));
   }
   return arr;
 }
 
-function generateSemiSortedArray(): number[] {
+function generateSemiSortedArray(length = len): number[] {
   let arr = [-3000];
-  for (let i = 1; i < len; i++) {
+  for (let i = 1; i < length; i++) {
     arr.push(Math.round(arr[i-1] + Math.round(Math.random()*5)));
   }
-  for (let i=0;i<Math.round(len/10);i++) {
-    let a = Math.random() * len;
-    let b = Math.random() * len;
+  for (let i=0;i<Math.round(length/10);i++) {
+    let a = Math.random() * length;
+    let b = Math.random() * length;
     [arr[a], arr[b]] = [arr[b], arr[a]];
   }
   return arr;
 }
 
-function generateReverseSortedArray(): number[] {
+function generateReverseSortedArray(length = len): number[] {
   let arr = [10000];
-  for (let i = 1; i < len+1; i++) {
+  for (let i = 1; i < length+1; i++) {
     arr.push(Math.round(arr[i-1] - Math.round(Math.random()*5)));
   }
   return arr;
 }
 
-function generateRandomArray(): number[] {
+function generateRandomArray(length = len): number[] {
   let arr = [];
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < length; i++) {
     arr.push(Math.round(10000 * Math.random()) - 3000);
   }
   return arr;
@@ -40,4 +40,4 @@ let  sortedArray = generateSortedArray();
 let semiSortedArray = generateSemiSortedArray();
 let reversedArray = generateReverseSortedArray();
 
-export { sortedArray, semiSortedArray, reversedArray, generateRandomArray };
+export { sortedArray, semiSortedArray, reversedArray, generateSortedArray, generateSemiSortedArray, generateReverseSortedArray, generateRandomArray };

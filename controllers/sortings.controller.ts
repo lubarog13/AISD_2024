@@ -1,14 +1,14 @@
-import express, { Express, Request, Response } from "express";
+import {  Request, Response } from "express";
 import {
-  testBubbleSort,
-  testHeapSort,
-  testHibbardSort,
-  testInsertionSort,
-  testMergeSort,
-  testPrattSort,
-  testQuickSort,
-  testSelectionSort,
-  testShellSort,
+  testBubbleSort, testBubbleSortTimes,
+  testHeapSort, testHeapSortTimes,
+  testHibbardSort, testHibbardSortTimes,
+  testInsertionSort, testInsertionSortTimes,
+  testMergeSort, testMergeSortTimes, testNonQuadroSort,
+  testPrattSort, testPrattSortTimes, testQuadroSort,
+  testQuickSort, testQuickSortTimes,
+  testSelectionSort, testSelectionSortTimes,
+  testShellSort, testShellSortTimes,
 } from "../1_lab/test";
 import {
   generateRandomArray,
@@ -28,6 +28,12 @@ export const get1LabPage = (request: Request, response: Response) => {
   let shell_result = testShellSort(randomArray);
   let hibbard_result = testHibbardSort(randomArray);
   let pratt_result = testPrattSort(randomArray);
+  let quadroResults = [];
+  let nonQuadroResults = [];
+  for (let i=1;i<=10;i++) {
+    quadroResults.push(testQuadroSort(i*1000));
+    nonQuadroResults.push(testNonQuadroSort(i*1000))
+  }
   let fastest_results = selection_result.map(it =>{ return  {name: 'Сортировка выбором', value: it}});
   for (let i =0;i<=3;i++) {
     if (bubble_result[i] < fastest_results[i].value) {
@@ -57,6 +63,8 @@ export const get1LabPage = (request: Request, response: Response) => {
 
   }
   response.render("index", {
+    quadroResults: [quadroResults.map(it => it[0]), quadroResults.map(it => it[1]), quadroResults.map(it => it[2]), quadroResults.map(it => it[3])],
+    nonQuadroResults: [nonQuadroResults.map(it => it[0]), nonQuadroResults.map(it => it[1]), nonQuadroResults.map(it => it[2]), nonQuadroResults.map(it => it[3]), nonQuadroResults.map(it => it[4])],
     selection_result,
     bubble_result,
     insertion_result,
@@ -73,3 +81,61 @@ export const get1LabPage = (request: Request, response: Response) => {
     fastest_results,
   });
 };
+
+export const selectionSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки выбором",
+    selection_result: testSelectionSortTimes()
+  })
+}
+
+export const bubbleSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки пузырьком",
+    selection_result: testBubbleSortTimes()
+  })
+}
+export const insertionSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки вставками",
+    selection_result: testInsertionSortTimes()
+  })
+}
+export const mergeSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки слиянием",
+    selection_result: testMergeSortTimes()
+  })
+}
+export const quickSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "быстрой сортировки",
+    selection_result: testQuickSortTimes()
+  })
+}
+export const heapSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "пирамидальной сортировки",
+    selection_result: testHeapSortTimes()
+  })
+}
+export const shellSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки Шелла (ряд Шелла)",
+    selection_result: testShellSortTimes()
+  })
+}
+export const hibbardSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки Шелла (ряд Хиббарда)",
+    selection_result: testHibbardSortTimes()
+  })
+}
+
+export const prattSortPage = (request: Request, response: Response) => {
+  response.render("algorithm", {
+    name: "сортировки Шелла (ряд Пратта)",
+    selection_result: testPrattSortTimes()
+  })
+}
+
