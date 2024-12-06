@@ -145,7 +145,7 @@ function quickSort(array) {
     if (array.length <= 1) {
         return array;
     }
-    const current = array[array.length - 1];
+    const current = array[array.length / 2];
     const left = [];
     const right = [];
     for (let i = 0; i < array.length - 1; i++) {

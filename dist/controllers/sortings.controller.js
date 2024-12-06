@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.get1LabPage = void 0;
+exports.prattSortPage = exports.hibbardSortPage = exports.shellSortPage = exports.heapSortPage = exports.quickSortPage = exports.mergeSortPage = exports.insertionSortPage = exports.bubbleSortPage = exports.selectionSortPage = exports.get1LabPage = void 0;
 const test_1 = require("../1_lab/test");
 const arrays_1 = require("../1_lab/arrays");
 const get1LabPage = (request, response) => {
@@ -14,6 +14,12 @@ const get1LabPage = (request, response) => {
     let shell_result = (0, test_1.testShellSort)(randomArray);
     let hibbard_result = (0, test_1.testHibbardSort)(randomArray);
     let pratt_result = (0, test_1.testPrattSort)(randomArray);
+    let quadroResults = [];
+    let nonQuadroResults = [];
+    for (let i = 1; i <= 10; i++) {
+        quadroResults.push((0, test_1.testQuadroSort)(i * 1000));
+        nonQuadroResults.push((0, test_1.testNonQuadroSort)(i * 1000));
+    }
     let fastest_results = selection_result.map(it => { return { name: 'Сортировка выбором', value: it }; });
     for (let i = 0; i <= 3; i++) {
         if (bubble_result[i] < fastest_results[i].value) {
@@ -42,6 +48,8 @@ const get1LabPage = (request, response) => {
         }
     }
     response.render("index", {
+        quadroResults: [quadroResults.map(it => it[0]), quadroResults.map(it => it[1]), quadroResults.map(it => it[2]), quadroResults.map(it => it[3])],
+        nonQuadroResults: [nonQuadroResults.map(it => it[0]), nonQuadroResults.map(it => it[1]), nonQuadroResults.map(it => it[2]), nonQuadroResults.map(it => it[3]), nonQuadroResults.map(it => it[4])],
         selection_result,
         bubble_result,
         insertion_result,
@@ -59,3 +67,66 @@ const get1LabPage = (request, response) => {
     });
 };
 exports.get1LabPage = get1LabPage;
+const selectionSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки выбором",
+        selection_result: (0, test_1.testSelectionSortTimes)()
+    });
+};
+exports.selectionSortPage = selectionSortPage;
+const bubbleSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки пузырьком",
+        selection_result: (0, test_1.testBubbleSortTimes)()
+    });
+};
+exports.bubbleSortPage = bubbleSortPage;
+const insertionSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки вставками",
+        selection_result: (0, test_1.testInsertionSortTimes)()
+    });
+};
+exports.insertionSortPage = insertionSortPage;
+const mergeSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки слиянием",
+        selection_result: (0, test_1.testMergeSortTimes)()
+    });
+};
+exports.mergeSortPage = mergeSortPage;
+const quickSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "быстрой сортировки",
+        selection_result: (0, test_1.testQuickSortTimes)()
+    });
+};
+exports.quickSortPage = quickSortPage;
+const heapSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "пирамидальной сортировки",
+        selection_result: (0, test_1.testHeapSortTimes)()
+    });
+};
+exports.heapSortPage = heapSortPage;
+const shellSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки Шелла (ряд Шелла)",
+        selection_result: (0, test_1.testShellSortTimes)()
+    });
+};
+exports.shellSortPage = shellSortPage;
+const hibbardSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки Шелла (ряд Хиббарда)",
+        selection_result: (0, test_1.testHibbardSortTimes)()
+    });
+};
+exports.hibbardSortPage = hibbardSortPage;
+const prattSortPage = (request, response) => {
+    response.render("algorithm", {
+        name: "сортировки Шелла (ряд Пратта)",
+        selection_result: (0, test_1.testPrattSortTimes)()
+    });
+};
+exports.prattSortPage = prattSortPage;
