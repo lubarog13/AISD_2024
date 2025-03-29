@@ -1,0 +1,58 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Сжатие файлов</title>
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+    <nav class="navbar fixed-top navbar-dark bg-dark">
+        <a class="navbar-brand mr-auto" href="#">АИСД ЛР1</a>
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Рогозина Л.А. 2321 </a>
+            </li>
+        </ul>
+    </nav>
+        <main class="pt-5">
+            <div class="container">
+                <h1 class="mt-5 mb-4">Сжатие файлов разными способами</h1>
+                <div class="row">
+                    <div class="col-sm">
+                        <form
+                            action="/minify"
+                            method="POST"
+                            enctype="multipart/form-data"
+                        >
+                            <div class="form-group">
+                                <label for="file" >Загрузите файл</label>
+                                <input
+                                    type="file"
+                                    name="file"
+                                    id="file"
+                                    class="form-control-file"
+                                    placeholder="Любой формат текста или изображение"
+                                />
+                                <small id="fileHelp" class="form-text text-muted">Любой формат текста или изображение.</small>
+                            </div>
+                            <button class="btn btn-primary mt-3" type="submit">Сжать</button>
+                        </form>
+                    </div>
+                </div>
+                {{#if success}}
+                <div class="row mt-5">
+                    <div class="alert alert-info">
+                        Успешно сжато и разжато: итоговый размер {{size}}Б
+                    </div>
+                </div>
+                {{/if}}
+            </div>
+        </main>
+    </body>
+</html>
