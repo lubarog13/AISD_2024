@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../partners/.idea/partners.iml" filepath="$PROJECT_DIR$/../partners/.idea/partners.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ts_algorithms.iml" filepath="$PROJECT_DIR$/.idea/ts_algorithms.iml" />
     </modules>
   </component>

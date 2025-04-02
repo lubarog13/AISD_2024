@@ -39,11 +39,11 @@ def count_symb(S):
     return counter
 */
 
-function countSymbols(str: string) : Array<number> {
-    let len = str.length;
-    let counter: Array<number> = Array(128).fill(0)
+function countSymbols(bytes: Uint8Array) : Array<number> {
+    let len = bytes.length;
+    let counter: Array<number> = Array(256).fill(0)
     for (let i=0;i<len;i++) {
-        counter[str.charCodeAt(i)] += 1
+        counter[bytes[i]] += 1
     }
     return counter;
 }
@@ -59,11 +59,11 @@ def prob_estimate(S):
     return P
 */
 
-function probEstimate(str: string): Array<number> {
-    let len = str.length;
-    let probs: Array<number> = Array(128).fill(0)
+function probEstimate(bytes: Uint8Array): Array<number> {
+    let len = bytes.length;
+    let probs: Array<number> = Array(256).fill(0)
     for (let i=0;i<len;i++) {
-        probs[str.charCodeAt(i)] += 1
+        probs[bytes[i]] += 1
     }
     return probs.map((it) => it / len);
 }
@@ -78,8 +78,8 @@ def entropy(S):
 
 */
 
-function entropy(str: string): number {
-    let probs = probEstimate(str).filter(it => it!==0);
+function entropy(bytes: Uint8Array): number {
+    let probs = probEstimate(bytes).filter(it => it!==0);
     return -1 * probs.map(it => Math.log2(it) * it).reduce((a, it) => {
         return a + it
     },0);
@@ -101,15 +101,15 @@ def MTF(S):
 
 */
 
-function moveToForward(str: string): string {
-    let t = [...Array(128).keys()].map(it => String.fromCharCode(it));
-    let newStr = "";
-    for (let i=0;i<str.length;i++) {
-        let index = t.indexOf(str[i]);
-        newStr+=String.fromCharCode(index);
+function moveToForward(bytes: Uint8Array): Uint8Array {
+    let t = [...Array(256).keys()];
+    let newStr: number[] = [];
+    for (let i=0;i<bytes.length;i++) {
+        let index = t.indexOf(bytes[i]);
+        newStr.push(i)
         t = [t[i], ...t.slice(0, index), ...t.slice(index+1)]
     }
-    return newStr
+    return new Uint8Array(newStr)
 }
 
 /*
@@ -126,15 +126,15 @@ def iMTF(S):
 
 */
 
-function inverseMoveToForward(str: string): string {
-    let t = [...Array(128).keys()].map(it => String.fromCharCode(it));
-    let newStr = "";
-    for (let i=0;i<str.length;i++) {
-        let index = str.charCodeAt(i)
-        newStr += t[index]
+function inverseMoveToForward(bytes: Uint8Array): Uint8Array {
+    let t = [...Array(256).keys()];
+    let newStr: number[] = []
+    for (let i=0;i<bytes.length;i++) {
+        let index = bytes[i]
+        newStr.push(t[index])
         t = [t[i], ...t.slice(0, index), ...t.slice(index+1)]
     }
-    return newStr;
+    return new Uint8Array(newStr);
 }
 
 /*
@@ -154,12 +154,12 @@ class Node():
 */
 
 class HuffmanNode {
-    symbol: string | null;
+    symbol: number | null;
     counter: number | null;
     left: HuffmanNode | null;
     right: HuffmanNode | null;
     parent: HuffmanNode | null;
-    constructor(symbol: string | null = null, counter: number | null = null, left: HuffmanNode | null=null, right: HuffmanNode | null=null, parent: HuffmanNode | null=null) {
+    constructor(symbol: number | null = null, counter: number | null = null, left: HuffmanNode | null=null, right: HuffmanNode | null=null, parent: HuffmanNode | null=null) {
         this.symbol = symbol;
         this.counter = counter;
         this.left = left;
@@ -225,13 +225,13 @@ function intFromBytes(byteArr: Array<number>) {
 }
 
 
-function huffmanEncoding(str: string) {
-    let c = countSymbols(str);
+function huffmanEncoding(bytes: Uint8Array) {
+    let c = countSymbols(bytes);
     let leafs: Array<HuffmanNode> = [];
     let queue = new Queue<HuffmanNode>()
     for (let i=0;i<128;i++) {
         if (c[i]!==0) {
-            let leaf = new HuffmanNode(String.fromCharCode(i), c[i])
+            let leaf = new HuffmanNode(i, c[i])
             leafs.push(leaf);
             queue.enqueue(leaf)
         }
@@ -248,7 +248,7 @@ function huffmanEncoding(str: string) {
         parent_node.counter = (left_node?.counter || 0) + (right_node?.counter || 0);
         queue.enqueue(parent_node)
     }
-    let codes:  {[index: string]:string}  = {}
+    let codes:  {[index: number]:string}  = {}
     leafs.forEach(leaf => {
         let node = leaf;
         let code = ""
@@ -261,23 +261,23 @@ function huffmanEncoding(str: string) {
             }
             node = node?.parent;
         }
-        codes[leaf.symbol || "0"] = code;
+        codes[leaf.symbol || 0] = code;
     })
     let coded_message = ""
-    for (let i=0;i<str.length;i++) {
-        coded_message += codes[str[i]]
+    for (let i=0;i<bytes.length;i++) {
+        coded_message += codes[bytes[i]]
     }
     let k = 8 - coded_message.length%8
     coded_message += "0".repeat(k)
     console.log(codes, coded_message)
-    let bytes = ""
+    let new_bytes = ""
     for (let i=0; i<coded_message.length;i+=8) {
         let x = stringBinaryToInt(coded_message.slice(i, i+8))
         console.log(x)
-        bytes+=x
+        new_bytes+=x
     }
     let utf8Encode = new TextEncoder();
-    return utf8Encode.encode(bytes)
+    return utf8Encode.encode(new_bytes)
 }
 /*
 
@@ -378,4 +378,4 @@ function lengthToCodes(lengths: {[index: string]:number}) {
 }
 
 
-console.log(huffmanEncoding("banana"))
+console.log(huffmanEncoding(new Uint8Array(new TextEncoder().encode("banana"))))

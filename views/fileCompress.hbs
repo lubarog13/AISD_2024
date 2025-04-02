@@ -52,6 +52,60 @@
                     </div>
                 </div>
                 {{/if}}
+                <h2 class="mt-4 mb-3">
+                    Примеры сжатия для файлов
+                </h2>
+                <ul class="nav nav-pills mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link {{#if lz77}}active{{/if}}" aria-current="page" href="/minify?algorithm=lz77">Lz77</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{#if lz78}}active{{/if}}" href="/minify?algorithm=lz78">Lz78</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{#if rle}}active{{/if}}" href="/minify?algorithm=rle">RLE</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{#if ha}}active{{/if}}" href="/minify?algorithm=ha">Хаффман</a>
+                    </li>
+                </ul>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Название файла / Алгоритм</th>
+                        <th scope="col">Размер до сжатия</th>
+                        <th scope="col">Размер после сжатия</th>
+                        <th scope="col">Размер после декомпрессии</th>
+                        <th scope="col">Коэффициент сжатия</th>
+                        <th scope="col">Ссылка на файл</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each file}}
+                        <tr>
+                            <th scope="row">
+                                {{this.[name]}} / {{this.[algorithm]}}
+                            </th>
+                            <td>
+                                {{this.[size]}}кБ
+                            </td>
+                            <td>
+                                {{this.[compressed_size]}}кБ
+                            </td>
+                            <td>
+                                {{this.[decompressed_size]}}кБ
+                            </td>
+                            <td>
+                                {{this.[coeff]}}%
+                            </td>
+                            <td>
+                                <a href="/{{this.[link]}}" download>{{this.[name]}}</a>
+                            </td>
+                        </tr>
+                    {{/each}}
+                    <tr></tr>
+                    </tbody>
+                </table>
             </div>
         </main>
     </body>

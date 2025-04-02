@@ -34,5 +34,5 @@ function decode_bwt({encoded, index, t_matrix}) {
     return lemp_str
 }
 
-
+console.log(encode_bwt(""))
 decode_bwt(encode_bwt('абракадабра'))

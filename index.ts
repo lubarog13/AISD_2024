@@ -39,6 +39,8 @@ app.get("/quick", quickSortPage);
 app.get("/heap", heapSortPage);
 app.get("/minify", formPage);
 app.post("/minify", upload.single("file"), postFileToServer);
+app.use('/files', express.static('files'))
+
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
