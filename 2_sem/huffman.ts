@@ -101,17 +101,6 @@ def MTF(S):
 
 */
 
-function moveToForward(bytes: Uint8Array): Uint8Array {
-    let t = [...Array(256).keys()];
-    let newStr: number[] = [];
-    for (let i=0;i<bytes.length;i++) {
-        let index = t.indexOf(bytes[i]);
-        newStr.push(i)
-        t = [t[i], ...t.slice(0, index), ...t.slice(index+1)]
-    }
-    return new Uint8Array(newStr)
-}
-
 /*
 
 # Обратное преобразование
@@ -125,18 +114,6 @@ def iMTF(S):
     return S_new
 
 */
-
-function inverseMoveToForward(bytes: Uint8Array): Uint8Array {
-    let t = [...Array(256).keys()];
-    let newStr: number[] = []
-    for (let i=0;i<bytes.length;i++) {
-        let index = bytes[i]
-        newStr.push(t[index])
-        t = [t[i], ...t.slice(0, index), ...t.slice(index+1)]
-    }
-    return new Uint8Array(newStr);
-}
-
 /*
 
 # Класс узла для дерева Хаффмана
@@ -215,17 +192,12 @@ def HA(S):
     return bytes_string
 */
 
-function getInt64Bytes(x: number) {
-    let y= Math.floor(x/2**32);
-    return [y,(y<<8),(y<<16),(y<<24), x,(x<<8),(x<<16),(x<<24)].map(z=> z>>>24)
+interface HuffmanResult {
+    codes: {[index: number]: string},
+    result: Uint8Array
 }
 
-function intFromBytes(byteArr: Array<number>) {
-    return byteArr.reduce((a,c,i)=> a+c*2**(56-i*8),0)
-}
-
-
-function huffmanEncoding(bytes: Uint8Array) {
+export function encodeHuffman(bytes: Uint8Array): HuffmanResult {
     let c = countSymbols(bytes);
     let leafs: Array<HuffmanNode> = [];
     let queue = new Queue<HuffmanNode>()
@@ -269,113 +241,27 @@ function huffmanEncoding(bytes: Uint8Array) {
     }
     let k = 8 - coded_message.length%8
     coded_message += "0".repeat(k)
-    console.log(codes, coded_message)
-    let new_bytes = ""
+    let new_bytes = []
     for (let i=0; i<coded_message.length;i+=8) {
-        let x = stringBinaryToInt(coded_message.slice(i, i+8))
-        console.log(x)
-        new_bytes+=x
+        let x = parseInt(coded_message.slice(i, i+8), 2)
+        new_bytes.push(x)
     }
-    let utf8Encode = new TextEncoder();
-    return utf8Encode.encode(new_bytes)
+    return {result: new Uint8Array(new_bytes), codes: codes}
 }
-/*
 
-# Преобразование строки размером 8 из нулей и единиц в двоичное число
-def string_binary_to_int(s):
-    X = 0
-    for i in range(8):
-        if s[i] == "1":
-            X = X + 2**(7-i)
-    return X
-*/
-
-function stringBinaryToInt(str: string) : number {
-    let x = 0
-    for (let i=0;i<8;i++) {
-        if (str[i] === "1") {
-            x = x+2**(7-i)
+export function decodeHuffman(encoded: HuffmanResult) : Uint8Array {
+    let result: number[] = []
+    let coded_message: string = Array.from(encoded.result).map(it => {
+        return it.toString(2).padStart(8, '0')
+    }).join('')
+    let buff = '';
+    let dict = Object.fromEntries(Object.entries(encoded.codes).map(a => a.reverse()))
+    for (let i=0;i<coded_message.length;i++) {
+        buff+= coded_message[i];
+        if (dict[buff]) {
+            result.push(Number(dict[buff]));
+            buff = ''
         }
     }
-    return x
+    return new Uint8Array(result)
 }
-
-/*
-# Средняя длина кода символа в строке при заданной кодировке
-def mean_length_of_codes(codes,S):
-    P = prob_estimate(S)
-    L = 0
-    for s in S:
-        L += len(codes[s])
-    L = L/len(S)
-    return L
-
-*/
-
-function meanCodeLength(codes: {[index: string]:string}, str: string): number {
-    return str.split('').reduce((a, it) => {
-         return a + codes[it].length
-     },0) / str.length;
-}
-
-/*
-
-# Получение длин кодов Хаффмана
-def codes_to_length(codes):
-    symbol_lengths = {}
-    for item in codes.items():
-        symbol = item[0]
-        symbol_lengths[symbol] = len(item[1])
-    return symbol_lengths
-*/
-
-function codesToLength(codes: {[index: string]:string}): {[index: string]:number} {
-    let lengths: {[index: string]:number} = {}
-    Object.keys(codes).forEach(it => {
-        lengths[it] = codes[it].length
-    })
-    return lengths;
-}
-
-/*
-# Преобразование длин кодов Хаффмана в канонические коды
-def length_to_codes(symbol_lengths):
-    symbol_lengths = dict(sorted(symbol_lengths.items(), key = lambda item: item[1]))
-    # print(symbol_lengths)
-    codes = {}
-    i = 0
-    for item in symbol_lengths.items():
-        symbol = item[0]
-        L = item[1]
-        if i == 0:
-            code = 0
-        else:
-            code = (prevCode + 1) * 2**(L-prevLen)
-        newStr = f'0b{code:032b}'
-        codes[symbol] = newStr[-L:]
-        prevCode = code
-        prevLen = L
-        i += 1
-    return codes
-* */
-
-function lengthToCodes(lengths: {[index: string]:number}) {
-    lengths = Object.fromEntries(
-        Object.entries(lengths).sort(([,a],[,b]) => a-b)
-    );
-    let codes: {[index: string]:string} = {}
-    let prevCode = -1
-    let prevLen = 0
-    Object.keys(lengths).forEach(item => {
-        let code = (prevCode + 1) * 2**(lengths[item] - prevLen)
-        let newStr = `0b{${Number(code.toString(2)).toFixed(32)}`
-        codes[item] = newStr.slice(-lengths[item]);
-        prevCode = code
-        prevLen = lengths[item]
-    })
-    return codes
-
-}
-
-
-console.log(huffmanEncoding(new Uint8Array(new TextEncoder().encode("banana"))))
