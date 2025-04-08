@@ -7,6 +7,7 @@ import { decode77, encode77 } from "../2_sem/lz77";
 import { compareArrays } from "../2_sem/functions";
 import { decodeMtf, encodeMtf } from "../2_sem/mtf";
 import { decodeHuffman, encodeHuffman } from "../2_sem/huffman";
+import { console } from "node:inspector";
 
 interface CompressedFile {
   name: string,
@@ -43,7 +44,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encoded77Content.length * 3 / 1024).toFixed(2),
       decompressed_size: (decoded77.length / 1024).toFixed(2),
-      coeff: ((encoded77Content.length * 3) / content.length * 100).toFixed(2),
+      coeff: ( content.length / (encoded77Content.length * 3) * 100).toFixed(2),
       link: `files/${filename}`
     })
     let encodedHa = encodeHuffman(new Uint8Array(encoded77Content));
@@ -59,7 +60,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decoded77.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(2),
       link: `files/${filename}`
     })
   }
@@ -103,40 +104,81 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedRleSize / 1024).toFixed(2),
       decompressed_size: (decodedRle.length / 1024).toFixed(2),
-      coeff: (encodedRleSize / content.length * 100).toFixed(2),
+      coeff: (content.length / encodedRleSize * 100).toFixed(2),
       link: `files/${filename}`
     })
-    let encodedBwt = encodeBWT(content);
-    encodedRle = encodeRLE(encodedBwt.encoded);
-    encodedRleSize = encodedRle.length;
-    decodedRle = decodeRLE(encodedRle);
-    let decodedBWT = decodeBWT({ encoded: decodedRle, index: encodedBwt.index, t_matrix: encodedBwt.t_matrix })
+    if (content.length < 5000) {
+      let encodedBwt = encodeBWT(content);
+      encodedRle = encodeRLE(encodedBwt.encoded);
+      encodedRleSize = encodedRle.length;
+      decodedRle = decodeRLE(encodedRle);
+      let decodedBWT = decodeBWT({ encoded: decodedRle, index: encodedBwt.index, t_matrix: encodedBwt.t_matrix })
+      algorithms.push({
+        name: filename,
+        algorithm: 'BWT + RLE',
+        size: (content.length / 1024).toFixed(2),
+        compressed_size: (encodedRleSize / 1024).toFixed(2),
+        decompressed_size: (decodedBWT.length / 1024).toFixed(2),
+        coeff: (encodedRleSize / content.length * 100).toFixed(2),
+        link: `files/${filename}`
+      })
+      let encodedMtf = encodeMtf(encodedBwt.encoded);
+      encodedRle = encodeRLE(encodedMtf.encoded);
+      let encodedHa = encodeHuffman(encodedRle);
+      let encodedHaSize = encodedHa.result.length;
+      let decodedHa = decodeHuffman(encodedHa);
+      decodedRle = decodeRLE(decodedHa);
+      let decodedMtf = decodeMtf({ encoded: decodedRle, dictionary: encodedMtf.dictionary });
+      decodedBWT = decodeBWT({ encoded: decodedMtf, index: encodedBwt.index, t_matrix: encodedBwt.t_matrix })
+      algorithms.push({
+        name: filename,
+        algorithm: 'BWT  + MTF + RLE + HA',
+        size: (content.length / 1024).toFixed(2),
+        compressed_size: (encodedHaSize / 1024).toFixed(2),
+        decompressed_size: (decodedBWT.length / 1024).toFixed(2),
+        coeff: (encodedHaSize / content.length * 100).toFixed(2),
+        link: `files/${filename}`
+      })
+  } else {
+    console.log('compressing parts')
+    let contentParts: Uint8Array[] = [];
+    for (let i=0;i<content.length;i+=5000) {
+      contentParts = [...contentParts, content.slice(i, i+5000)];
+    }
+    console.log(contentParts.length)
+    let encodedBwtParts = contentParts.map(it => encodeBWT(it));
+    let encodedRleParts = encodedBwtParts.map(it => encodeRLE(it.encoded))
+    let encodedRlePartsSize = encodedRleParts.reduce((acc, it) => acc + it.length, 0);
+    let decodedRleParts = encodedRleParts.map(it => decodeRLE(it));
+    let decodedBWTParts = decodedRleParts.map((it, index) => decodeBWT({ encoded: it, index: encodedBwtParts[index].index, t_matrix: encodedBwtParts[index].t_matrix }));
+    let decodedBWTPartsSize = decodedBWTParts.reduce((acc, it) => acc + it.length, 0);
     algorithms.push({
       name: filename,
-      algorithm: 'BWT + RLE',
+      algorithm: `BWT + RLE ${contentParts.length}`,
       size: (content.length / 1024).toFixed(2),
-      compressed_size: (encodedRleSize / 1024).toFixed(2),
-      decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-      coeff: (encodedRleSize / content.length * 100).toFixed(2),
+      compressed_size: (encodedRlePartsSize / 1024).toFixed(2),
+      decompressed_size: (decodedBWTPartsSize / 1024).toFixed(2),
+      coeff: (content.length / encodedRlePartsSize * 100).toFixed(2),
       link: `files/${filename}`
     })
-    let encodedMtf = encodeMtf(encodedBwt.encoded);
-    encodedRle = encodeRLE(encodedMtf.encoded);
-    let encodedHa = encodeHuffman(encodedRle);
-    let encodedHaSize = encodedHa.result.length;
-    let decodedHa = decodeHuffman(encodedHa);
-    decodedRle = decodeRLE(decodedHa);
-    let decodedMtf = decodeMtf({ encoded: decodedRle, dictionary: encodedMtf.dictionary });
-    decodedBWT = decodeBWT({ encoded: decodedMtf, index: encodedBwt.index, t_matrix: encodedBwt.t_matrix })
+    let encodedMtfParts = encodedBwtParts.map(it => encodeMtf(it.encoded));
+    encodedRleParts = encodedMtfParts.map(it => encodeRLE(it.encoded));
+    let encodedHaParts = encodedRleParts.map(it => encodeHuffman(it));
+    let encodedHaPartsSize = encodedHaParts.reduce((acc, it) => acc + it.result.length, 0);
+    let decodedHaParts = encodedHaParts.map(it => decodeHuffman(it));
+    decodedRleParts = decodedHaParts.map(it => decodeRLE(it));
+    decodedBWTParts = decodedRleParts.map((it, index) => decodeBWT({ encoded: it, index: encodedBwtParts[index].index, t_matrix: encodedBwtParts[index].t_matrix }));
+    decodedBWTPartsSize = decodedBWTParts.reduce((acc, it) => acc + it.length, 0);
     algorithms.push({
       name: filename,
-      algorithm: 'BWT  + MTF + RLE + HA',
+      algorithm: 'BWT + MTF + RLE + HA',
       size: (content.length / 1024).toFixed(2),
-      compressed_size: (encodedHaSize / 1024).toFixed(2),
-      decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(2),
+      compressed_size: (encodedHaPartsSize / 1024).toFixed(2),
+      decompressed_size: (decodedBWTPartsSize / 1024).toFixed(2),
+      coeff: ( content.length / encodedHaPartsSize * 100).toFixed(2),
       link: `files/${filename}`
-    })
+    });
+  }
   }
   if (part === 'ha' || part === 'all') {
     let encodedHa = encodeHuffman(content);
@@ -148,7 +190,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decodedHa.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(2),
       link: `files/${filename}`
     })
     let encodedBwt = encodeBWT(content);
@@ -164,7 +206,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(2),
       link: `files/${filename}`
     })
     encodedMtf = encodeMtf(encodedBwt.encoded);
@@ -181,7 +223,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(2),
       link: `files/${filename}`
     })
   }
@@ -208,6 +250,8 @@ function comressStaticFiles(onFilesRead: (_: CompressedFile[]) => void, part: st
 export const formPage = async (request: Request, response: Response) => {
   let files: CompressedFile[] = []
   let algorithm = (typeof request.query.algorithm === 'string' ? request.query.algorithm : 'lz77')
+  // response.write(algorithm);
+  console.log(algorithm)
   comressStaticFiles((val) => {
     files = val
     let resp = { file: files }
