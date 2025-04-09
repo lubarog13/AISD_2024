@@ -44,7 +44,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encoded77Content.length * 3 / 1024).toFixed(2),
       decompressed_size: (decoded77.length / 1024).toFixed(2),
-      coeff: ( content.length / (encoded77Content.length * 3) * 100).toFixed(2),
+      coeff: ( content.length / (encoded77Content.length * 3) * 100).toFixed(3),
       link: `files/${filename}`
     })
     let encodedHa = encodeHuffman(new Uint8Array(encoded77Content));
@@ -60,7 +60,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decoded77.length / 1024).toFixed(2),
-      coeff: (content.length / encodedHaSize * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(3),
       link: `files/${filename}`
     })
   }
@@ -74,7 +74,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encoded78Size / 1024).toFixed(2),
       decompressed_size: (decoded78.length / 1024).toFixed(2),
-      coeff: (encoded78Size / content.length * 100).toFixed(2),
+      coeff: (encoded78Size / content.length * 100).toFixed(3),
       link: `files/${filename}`
     })
     let encodedHa = encodeHuffman(new Uint8Array(encoded78.map(it => it.next)));
@@ -90,7 +90,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decoded78.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(2),
+      coeff: (encodedHaSize / content.length * 100).toFixed(3),
       link: `files/${filename}`
     })
   }
@@ -104,7 +104,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedRleSize / 1024).toFixed(2),
       decompressed_size: (decodedRle.length / 1024).toFixed(2),
-      coeff: (content.length / encodedRleSize * 100).toFixed(2),
+      coeff: (content.length / encodedRleSize * 100).toFixed(3),
       link: `files/${filename}`
     })
     if (content.length < 5000) {
@@ -119,7 +119,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
         size: (content.length / 1024).toFixed(2),
         compressed_size: (encodedRleSize / 1024).toFixed(2),
         decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-        coeff: (encodedRleSize / content.length * 100).toFixed(2),
+        coeff: (encodedRleSize / content.length * 100).toFixed(3),
         link: `files/${filename}`
       })
       let encodedMtf = encodeMtf(encodedBwt.encoded);
@@ -136,7 +136,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
         size: (content.length / 1024).toFixed(2),
         compressed_size: (encodedHaSize / 1024).toFixed(2),
         decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-        coeff: (encodedHaSize / content.length * 100).toFixed(2),
+        coeff: (encodedHaSize / content.length * 100).toFixed(3),
         link: `files/${filename}`
       })
   } else {
@@ -175,7 +175,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaPartsSize / 1024).toFixed(2),
       decompressed_size: (decodedBWTPartsSize / 1024).toFixed(2),
-      coeff: ( content.length / encodedHaPartsSize * 100).toFixed(2),
+      coeff: ( content.length / encodedHaPartsSize * 100).toFixed(3),
       link: `files/${filename}`
     });
   }
@@ -190,7 +190,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decodedHa.length / 1024).toFixed(2),
-      coeff: (content.length / encodedHaSize * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(3),
       link: `files/${filename}`
     })
     let encodedBwt = encodeBWT(content);
@@ -206,7 +206,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-      coeff: (content.length / encodedHaSize * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(3),
       link: `files/${filename}`
     })
     encodedMtf = encodeMtf(encodedBwt.encoded);
@@ -223,7 +223,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-      coeff: (content.length / encodedHaSize * 100).toFixed(2),
+      coeff: (content.length / encodedHaSize * 100).toFixed(3),
       link: `files/${filename}`
     })
   }
