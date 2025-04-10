@@ -4,7 +4,6 @@ import { encodeRLE, decodeRLE } from "../2_sem/rle";
 import { encodeBWT, decodeBWT } from "../2_sem/bwt";
 import { decode78, encode78 } from "../2_sem/lz78";
 import { decode77, encode77 } from "../2_sem/lz77";
-import { compareArrays } from "../2_sem/functions";
 import { decodeMtf, encodeMtf } from "../2_sem/mtf";
 import { decodeHuffman, encodeHuffman } from "../2_sem/huffman";
 import { console } from "node:inspector";
@@ -74,7 +73,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encoded78Size / 1024).toFixed(2),
       decompressed_size: (decoded78.length / 1024).toFixed(2),
-      coeff: (encoded78Size / content.length * 100).toFixed(3),
+      coeff: (content.length / encoded78Size * 100).toFixed(3),
       link: `files/${filename}`
     })
     let encodedHa = encodeHuffman(new Uint8Array(encoded78.map(it => it.next)));
@@ -90,7 +89,7 @@ function compressFile(filename: string, content: Uint8Array, part: string = 'all
       size: (content.length / 1024).toFixed(2),
       compressed_size: (encodedHaSize / 1024).toFixed(2),
       decompressed_size: (decoded78.length / 1024).toFixed(2),
-      coeff: (encodedHaSize / content.length * 100).toFixed(3),
+      coeff: (content.length / encodedHaSize * 100).toFixed(3),
       link: `files/${filename}`
     })
   }
@@ -268,11 +267,13 @@ export const postFileToServer = (request: Request, response: Response) => {
   }
   const bytes = fs.readFileSync(file.path);
   const bytesArray = new Uint8Array(bytes);
-  let new_file = compressFile(file.name || '', bytesArray);
+  let new_file = compressFile(file.name || '', bytesArray, 'all');
   if (new_file.length) {
     response.status(200).render('fileCompress', {
       success: true,
-      size: new_file[0].compressed_size
+      file: new_file,
+      algorithm: true,
+      size: Math.min(...new_file.map(it => Number(it.compressed_size)))
     });
   } else {
     response.status(200).render('fileCompress', {

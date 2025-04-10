@@ -41,7 +41,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encoded77Content.length * 3 / 1024).toFixed(2),
             decompressed_size: (decoded77.length / 1024).toFixed(2),
-            coeff: ((encoded77Content.length * 3) / content.length * 100).toFixed(2),
+            coeff: (content.length / (encoded77Content.length * 3) * 100).toFixed(3),
             link: `files/${filename}`
         });
         let encodedHa = (0, huffman_1.encodeHuffman)(new Uint8Array(encoded77Content));
@@ -57,7 +57,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encodedHaSize / 1024).toFixed(2),
             decompressed_size: (decoded77.length / 1024).toFixed(2),
-            coeff: (encodedHaSize / content.length * 100).toFixed(2),
+            coeff: (content.length / encodedHaSize * 100).toFixed(3),
             link: `files/${filename}`
         });
     }
@@ -71,7 +71,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encoded78Size / 1024).toFixed(2),
             decompressed_size: (decoded78.length / 1024).toFixed(2),
-            coeff: (encoded78Size / content.length * 100).toFixed(2),
+            coeff: (encoded78Size / content.length * 100).toFixed(3),
             link: `files/${filename}`
         });
         let encodedHa = (0, huffman_1.encodeHuffman)(new Uint8Array(encoded78.map(it => it.next)));
@@ -87,7 +87,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encodedHaSize / 1024).toFixed(2),
             decompressed_size: (decoded78.length / 1024).toFixed(2),
-            coeff: (encodedHaSize / content.length * 100).toFixed(2),
+            coeff: (encodedHaSize / content.length * 100).toFixed(3),
             link: `files/${filename}`
         });
     }
@@ -101,7 +101,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encodedRleSize / 1024).toFixed(2),
             decompressed_size: (decodedRle.length / 1024).toFixed(2),
-            coeff: (encodedRleSize / content.length * 100).toFixed(2),
+            coeff: (content.length / encodedRleSize * 100).toFixed(3),
             link: `files/${filename}`
         });
         if (content.length < 5000) {
@@ -116,7 +116,7 @@ function compressFile(filename, content, part = 'all') {
                 size: (content.length / 1024).toFixed(2),
                 compressed_size: (encodedRleSize / 1024).toFixed(2),
                 decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-                coeff: (encodedRleSize / content.length * 100).toFixed(2),
+                coeff: (encodedRleSize / content.length * 100).toFixed(3),
                 link: `files/${filename}`
             });
             let encodedMtf = (0, mtf_1.encodeMtf)(encodedBwt.encoded);
@@ -133,7 +133,7 @@ function compressFile(filename, content, part = 'all') {
                 size: (content.length / 1024).toFixed(2),
                 compressed_size: (encodedHaSize / 1024).toFixed(2),
                 decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-                coeff: (encodedHaSize / content.length * 100).toFixed(2),
+                coeff: (encodedHaSize / content.length * 100).toFixed(3),
                 link: `files/${filename}`
             });
         }
@@ -152,11 +152,11 @@ function compressFile(filename, content, part = 'all') {
             let decodedBWTPartsSize = decodedBWTParts.reduce((acc, it) => acc + it.length, 0);
             algorithms.push({
                 name: filename,
-                algorithm: 'BWT + RLE',
+                algorithm: `BWT + RLE ${contentParts.length}`,
                 size: (content.length / 1024).toFixed(2),
                 compressed_size: (encodedRlePartsSize / 1024).toFixed(2),
                 decompressed_size: (decodedBWTPartsSize / 1024).toFixed(2),
-                coeff: (encodedRlePartsSize / content.length * 100).toFixed(2),
+                coeff: (content.length / encodedRlePartsSize * 100).toFixed(2),
                 link: `files/${filename}`
             });
             let encodedMtfParts = encodedBwtParts.map(it => (0, mtf_1.encodeMtf)(it.encoded));
@@ -173,7 +173,7 @@ function compressFile(filename, content, part = 'all') {
                 size: (content.length / 1024).toFixed(2),
                 compressed_size: (encodedHaPartsSize / 1024).toFixed(2),
                 decompressed_size: (decodedBWTPartsSize / 1024).toFixed(2),
-                coeff: (encodedRlePartsSize / content.length * 100).toFixed(2),
+                coeff: (content.length / encodedHaPartsSize * 100).toFixed(3),
                 link: `files/${filename}`
             });
         }
@@ -188,7 +188,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encodedHaSize / 1024).toFixed(2),
             decompressed_size: (decodedHa.length / 1024).toFixed(2),
-            coeff: (encodedHaSize / content.length * 100).toFixed(2),
+            coeff: (content.length / encodedHaSize * 100).toFixed(3),
             link: `files/${filename}`
         });
         let encodedBwt = (0, bwt_1.encodeBWT)(content);
@@ -204,7 +204,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encodedHaSize / 1024).toFixed(2),
             decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-            coeff: (encodedHaSize / content.length * 100).toFixed(2),
+            coeff: (content.length / encodedHaSize * 100).toFixed(3),
             link: `files/${filename}`
         });
         encodedMtf = (0, mtf_1.encodeMtf)(encodedBwt.encoded);
@@ -221,7 +221,7 @@ function compressFile(filename, content, part = 'all') {
             size: (content.length / 1024).toFixed(2),
             compressed_size: (encodedHaSize / 1024).toFixed(2),
             decompressed_size: (decodedBWT.length / 1024).toFixed(2),
-            coeff: (encodedHaSize / content.length * 100).toFixed(2),
+            coeff: (content.length / encodedHaSize * 100).toFixed(3),
             link: `files/${filename}`
         });
     }
@@ -246,6 +246,7 @@ function comressStaticFiles(onFilesRead, part = 'all') {
 const formPage = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     let files = [];
     let algorithm = (typeof request.query.algorithm === 'string' ? request.query.algorithm : 'lz77');
+    // response.write(algorithm);
     node_inspector_1.console.log(algorithm);
     comressStaticFiles((val) => {
         files = val;

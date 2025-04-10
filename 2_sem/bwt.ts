@@ -1,6 +1,3 @@
-import _default from "chart.js/dist/core/core.interaction";
-import index = _default.modes.index;
-
 export interface EncodedTable {
     encoded: Uint8Array,
     index: number,

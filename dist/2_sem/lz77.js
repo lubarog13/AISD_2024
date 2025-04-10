@@ -2,28 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.encode77 = encode77;
 exports.decode77 = decode77;
-/*
-* def LZ77(S):
-    buffer_size = 10
-    string_size = 10
-    coding_list = []
-    buffer = ""
-    N = len(S)
-    i = 0
-    while i < N:
-        buffer = S[max(0,i-buffer_size) : i]
-        print(i, repr(buffer))
-        new_buffer_size = len(buffer)
-        shift = -1
-        for j in range(string_size, -1, -1):
-            subS = S[i : min(i + j,N)]
-            shift = buffer.find(subS)
-            if shift != -1:
-                break
-        coding_list.append((new_buffer_size - shift, len(subS), S[i + len(subS)]))
-        i += len(subS)+1
-    return coding_list
-*/
 const functions_1 = require("./functions");
 function encode77(bytes) {
     let bufferSize = 10;
@@ -46,17 +24,6 @@ function encode77(bytes) {
     }
     return codingList;
 }
-/*
-# декодирование LZ77
-def iLZ77(compressed_message):
-    compressed_message = [(0,0,"a"), (0,0,"b"),(2,2,"c"),(5,4,"e")]
-    S = ""
-    for t in compressed_message:
-        shift, length, symbol = t
-        print(t)
-        N =len(S)
-        S += S[N-shift : N-shift+length]+ symbol
-    return S*/
 function decode77(compressed) {
     let bytesDecoded = [];
     compressed.forEach(item => {

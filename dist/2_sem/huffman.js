@@ -23,15 +23,6 @@ class Queue {
         return this.storage.length;
     }
 }
-/*
-# Нахождение частот символов в строке
-def count_symb(S):
-    N = len(S)
-    counter = numpy.array([0 for _ in range(128)])
-    for s in S:
-        counter[ord(s)] += 1
-    return counter
-*/
 function countSymbols(bytes) {
     let len = bytes.length;
     let counter = Array(256).fill(0);
@@ -40,16 +31,6 @@ function countSymbols(bytes) {
     }
     return counter;
 }
-/*
-# Нахождение вероятностей символов в строке
-def prob_estimate(S):
-    N = len(S)
-    P = numpy.array([0 for _ in range(128)])
-    for s in S:
-        P[ord(s)] += 1
-    P = P/N
-    return P
-*/
 function probEstimate(bytes) {
     let len = bytes.length;
     let probs = Array(256).fill(0);
@@ -58,64 +39,12 @@ function probEstimate(bytes) {
     }
     return probs.map((it) => it / len);
 }
-/*
-# Вычисление энтропии строки
-def entropy(S):
-    P = prob_estimate(S)
-    P = numpy.array(list(filter(lambda x: x!=0,P)))
-    E = -sum(numpy.log2(P) * P)
-    return E
-
-*/
 function entropy(bytes) {
     let probs = probEstimate(bytes).filter(it => it !== 0);
     return -1 * probs.map(it => Math.log2(it) * it).reduce((a, it) => {
         return a + it;
     }, 0);
 }
-/*
-
-# Наивная реализация преобразования движения к началу
-def MTF(S):
-    T = [chr(i) for i in range(128)]
-    L = []
-    S_new = ""
-    for s in S:
-        i = T.index(s)
-        L.append(i)
-        S_new += chr(i)
-        T = [T[i]] + T[:i] + T[i+1:]
-    return S_new
-
-*/
-/*
-
-# Обратное преобразование
-def iMTF(S):
-    T = [chr(i) for i in range(128)]
-    S_new = ""
-    for s in S:
-        i = ord(s)
-        S_new += T[i]
-        T = [T[i]] + T[:i] + T[i+1:]
-    return S_new
-
-*/
-/*
-
-# Класс узла для дерева Хаффмана
-class Node():
-    def __init__(self, symbol = None, counter = None, left = None, right =None, parent = None):
-        self.symbol = symbol
-        self.counter = counter
-        self.left = left
-        self.right = right
-        self.parent = parent
-    def __lt__(self, other):
-        return self.counter < other.counter
-*
-
-*/
 class HuffmanNode {
     constructor(symbol = null, counter = null, left = null, right = null, parent = null) {
         this.symbol = symbol;
