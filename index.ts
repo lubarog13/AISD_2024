@@ -15,6 +15,7 @@ import {
 import {
   formPage,
   postFileToServer,
+  saveFilesBytes,
 } from "./controllers/compressor.controller";
 import * as os from "node:os";
 
@@ -38,6 +39,7 @@ app.get("/pratt", prattSortPage);
 app.get("/quick", quickSortPage);
 app.get("/heap", heapSortPage);
 app.get("/minify", formPage);
+app.get("/save-bytes", saveFilesBytes);
 app.post("/minify", upload.single("file"), postFileToServer);
 app.use('/files', express.static('files'))
 
