@@ -62,7 +62,7 @@ function encodeHuffman(bytes) {
     let c = countSymbols(bytes);
     let leafs = [];
     let queue = new Queue();
-    for (let i = 0; i < 128; i++) {
+    for (let i = 0; i < 256; i++) {
         if (c[i] !== 0) {
             let leaf = new HuffmanNode(i, c[i]);
             leafs.push(leaf);

@@ -1,4 +1,5 @@
 "use strict";
+/* Дописать бвт без передачи t_matrix, написать сохранение картики побайтово в файл */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.encodeBWT = encodeBWT;
 exports.decodeBWT = decodeBWT;
@@ -20,10 +21,6 @@ function encodeBWT(word) {
     arr.sort(compareByteTables);
     let sorted_arr = [...arr];
     sorted_arr.sort((a, b) => compareByteTables(a.slice(-1), b.slice(-1)));
-    let t_matrix = {};
-    arr.forEach((it, i) => {
-        t_matrix[sorted_arr.indexOf(it)] = i;
-    });
     let tempArr = arr.map(it => new Uint8Array(it));
     const compareArrays = (a, b) => a.length === b.length &&
         a.every((element, index) => element === b[index]);
@@ -31,11 +28,19 @@ function encodeBWT(word) {
     arr.map(it => encodedArray.push(it.slice(-1)[0]));
     return {
         encoded: new Uint8Array(encodedArray),
-        index: tempArr.findIndex(it => compareArrays(it, word)),
-        t_matrix
+        index: tempArr.findIndex(it => compareArrays(it, word))
     };
 }
-function decodeBWT({ encoded, index, t_matrix }) {
+function decodeBWT({ encoded, index }) {
+    let tempMatrix = [];
+    for (let i = 0; i < encoded.length; i++) {
+        tempMatrix.push([encoded[i], i]);
+    }
+    tempMatrix.sort((a, b) => a[0] - b[0]);
+    let t_matrix = {};
+    for (let i in tempMatrix) {
+        t_matrix[i] = tempMatrix[i][1];
+    }
     let temp_arr = [];
     let len = encoded.length;
     let curr_ind = index;

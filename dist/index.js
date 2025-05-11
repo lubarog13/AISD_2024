@@ -48,8 +48,10 @@ app.get("/pratt", sortings_controller_1.prattSortPage);
 app.get("/quick", sortings_controller_1.quickSortPage);
 app.get("/heap", sortings_controller_1.heapSortPage);
 app.get("/minify", compressor_controller_1.formPage);
+app.get("/save-bytes", compressor_controller_1.saveFilesBytes);
 app.post("/minify", upload.single("file"), compressor_controller_1.postFileToServer);
 app.use('/files', express_1.default.static('files'));
+app.get('/jpeg', compressor_controller_1.getJpegPage);
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 });

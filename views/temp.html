@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <img id="poland" src="/files/poland.png" alt="">
+</body>
+<script>
+    function getImageDataFromImage(idOrElement) {
+        var theImg = (typeof(idOrElement)=='string')? document.getElementById(idOrElement):idOrElement;
+        var cvs = document.createElement('canvas');
+        if (theImg instanceof HTMLImageElement) {
+            cvs.width = theImg.width;
+            cvs.height = theImg.height;
+            var ctx = cvs.getContext("2d");
+            if (ctx) {
+                ctx.drawImage(theImg,0,0);
+                return (ctx.getImageData(0, 0, cvs.width, cvs.height));
+            }
+        }
+        return null;
+    }
+    document.addEventListener("DOMContentLoaded", function(event) {
+        console.log(getImageDataFromImage(document.querySelector('img')))
+    });
+</script>
+</html>

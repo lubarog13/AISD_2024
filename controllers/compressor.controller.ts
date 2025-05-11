@@ -339,3 +339,7 @@ export const postFileToServer = (request: Request, response: Response) => {
     });
   }
 };
+
+export const getJpegPage = (request: Request, response: Response) => {
+  response.status(200).render('jpeg');
+}

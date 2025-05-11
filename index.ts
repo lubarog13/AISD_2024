@@ -16,6 +16,7 @@ import {
   formPage,
   postFileToServer,
   saveFilesBytes,
+  getJpegPage,
 } from "./controllers/compressor.controller";
 import * as os from "node:os";
 
@@ -42,6 +43,7 @@ app.get("/minify", formPage);
 app.get("/save-bytes", saveFilesBytes);
 app.post("/minify", upload.single("file"), postFileToServer);
 app.use('/files', express.static('files'))
+app.get('/jpeg', getJpegPage);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
