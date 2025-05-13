@@ -3,9 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Q = exports.ZigZag = void 0;
-exports.getImageDataFromImage = getImageDataFromImage;
+exports.UVQ = exports.YQ = exports.ZigZag = void 0;
 exports.encodeJPEG = encodeJPEG;
+exports.getImageDataFromImage = getImageDataFromImage;
 const fs_1 = __importDefault(require("fs"));
 const jpeg_decoder_1 = require("./jpeg_decoder");
 exports.ZigZag = [
@@ -18,7 +18,7 @@ exports.ZigZag = [
     [21, 34, 37, 47, 50, 56, 59, 61],
     [35, 36, 48, 49, 57, 58, 62, 63]
 ];
-exports.Q = [
+exports.YQ = [
     [16, 11, 10, 16, 24, 40, 51, 61],
     [12, 12, 14, 19, 26, 58, 60, 55],
     [14, 13, 16, 24, 40, 57, 69, 56],
@@ -28,58 +28,16 @@ exports.Q = [
     [49, 64, 78, 87, 103, 121, 120, 101],
     [72, 92, 95, 98, 112, 100, 103, 99]
 ];
-function dct(block) {
-    const N = 8; // Block size
-    const result = Array(N).fill(0).map(() => Array(N).fill(0));
-    // Helper function to calculate alpha(u) and alpha(v)
-    const alpha = (u) => u === 0 ? 1 / Math.sqrt(N) : Math.sqrt(2 / N);
-    // 2D DCT implementation
-    for (let u = 0; u < N; u++) {
-        for (let v = 0; v < N; v++) {
-            let sum = 0;
-            for (let x = 0; x < N; x++) {
-                for (let y = 0; y < N; y++) {
-                    const cos1 = Math.cos((2 * x + 1) * u * Math.PI / (2 * N));
-                    const cos2 = Math.cos((2 * y + 1) * v * Math.PI / (2 * N));
-                    try {
-                        sum += block[x][y] * cos1 * cos2;
-                    }
-                    catch (e) {
-                        console.log(block);
-                        throw new Error("Вот тут");
-                    }
-                }
-            }
-            result[u][v] = alpha(u) * alpha(v) * sum;
-        }
-    }
-    return result;
-}
-function quantizeDCT(block) {
-    const result = Array(8).fill(0).map(() => Array(8).fill(0));
-    for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-            result[i][j] = Math.round(block[i][j] / exports.Q[i][j]);
-        }
-    }
-    return result;
-}
-function zigzag(block) {
-    const result = new Array(64);
-    for (let i = 0; i < 64; i++) {
-        let blockXIndex = 0;
-        let blockYIndex = 0;
-        for (let index1 in exports.ZigZag) {
-            if (exports.ZigZag[index1].indexOf(i) != -1) {
-                blockXIndex = Number(index1);
-                blockYIndex = exports.ZigZag[index1].indexOf(i);
-                break;
-            }
-        }
-        result[i] = block[blockXIndex][blockYIndex];
-    }
-    return result;
-}
+exports.UVQ = [
+    [17, 18, 24, 47, 99, 99, 99, 99],
+    [18, 21, 26, 66, 99, 99, 99, 99],
+    [24, 26, 56, 99, 99, 99, 99, 99],
+    [47, 66, 99, 99, 99, 99, 99, 99],
+    [99, 99, 99, 99, 99, 99, 99, 99],
+    [99, 99, 99, 99, 99, 99, 99, 99],
+    [99, 99, 99, 99, 99, 99, 99, 99],
+    [99, 99, 99, 99, 99, 99, 99, 99],
+];
 function rgbaToRgb(pixel, alpha) {
     let new_pixel = {
         r: ((1 - alpha) * (pixel.r / 255) + (alpha * pixel.r / 255)) * 255,
@@ -125,17 +83,84 @@ function resizeImage(image) {
 }
 function createBlocks(matrix) {
     const blocks = [];
-    let x = 0;
-    let y = 0;
     for (let i = 0; i < matrix.length; i += 8) {
         for (let j = 0; j < matrix[i].length; j += 8) {
-            blocks.push({ x: x, y: y, pixels: matrix.slice(i, i + 8).map(row => row.slice(j, j + 8)) });
-            y++;
+            const block = [];
+            for (let x = 0; x < 8; x++) {
+                const row = matrix[i + x].slice(j, j + 8);
+                block.push(row);
+            }
+            blocks.push(block);
         }
-        x++;
-        y = 0;
     }
     return blocks;
+}
+function mergeBlocks(blocks, width, height) {
+    const matrix = Array(height).fill(0).map(() => Array(width).fill(0));
+    let blockIndex = 0;
+    for (let i = 0; i < height; i += 8) {
+        for (let j = 0; j < width; j += 8) {
+            const block = blocks[blockIndex++];
+            for (let x = 0; x < 8; x++) {
+                for (let y = 0; y < 8; y++) {
+                    if (i + x < height && j + y < width) {
+                        matrix[i + x][j + y] = block[x][y];
+                    }
+                }
+            }
+        }
+    }
+    return matrix;
+}
+function dct(block) {
+    const N = 8;
+    const result = Array(N).fill(0).map(() => Array(N).fill(0));
+    const alpha = (u) => u === 0 ? 1 / Math.sqrt(N) : Math.sqrt(2 / N);
+    for (let u = 0; u < N; u++) {
+        for (let v = 0; v < N; v++) {
+            let sum = 0;
+            for (let x = 0; x < N; x++) {
+                for (let y = 0; y < N; y++) {
+                    const cos1 = Math.cos((2 * x + 1) * u * Math.PI / (2 * N));
+                    const cos2 = Math.cos((2 * y + 1) * v * Math.PI / (2 * N));
+                    try {
+                        sum += block[x][y] * cos1 * cos2;
+                    }
+                    catch (e) {
+                        console.log(block);
+                        throw new Error("Вот тут");
+                    }
+                }
+            }
+            result[u][v] = alpha(u) * alpha(v) * sum;
+        }
+    }
+    return result;
+}
+function quantizeDCT(block, isY) {
+    const result = Array(8).fill(0).map(() => Array(8).fill(0));
+    for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+            result[i][j] = Math.round(block[i][j] * 255 / (isY ? exports.YQ[i][j] : exports.UVQ[i][j]));
+        }
+    }
+    return result;
+}
+function zigzag(block) {
+    const result = new Array(64);
+    for (let i = 0; i < 64; i++) {
+        let blockXIndex = 0;
+        let blockYIndex = 0;
+        for (let index1 in exports.ZigZag) {
+            if (exports.ZigZag[index1].indexOf(i) != -1) {
+                blockXIndex = Number(index1);
+                blockYIndex = exports.ZigZag[index1].indexOf(i);
+                break;
+            }
+        }
+        result[i] = block[blockXIndex][blockYIndex];
+    }
+    return result;
 }
 function runLengthEncode(block) {
     const result = [];
@@ -152,7 +177,6 @@ function runLengthEncode(block) {
             result.push({ count: 1, value: block[i] });
         }
     }
-    // Handle trailing zeros
     if (zeroCount > 0) {
         result.push({ count: zeroCount, value: 0 });
     }
@@ -172,7 +196,6 @@ function buildFrequencyTable(data) {
 }
 function buildHuffmanTree(frequencyTable) {
     const nodes = [];
-    // Create leaf nodes
     frequencyTable.forEach((frequency, value) => {
         nodes.push({
             value,
@@ -181,7 +204,6 @@ function buildHuffmanTree(frequencyTable) {
             right: null
         });
     });
-    // Build tree
     while (nodes.length > 1) {
         nodes.sort((a, b) => a.frequency - b.frequency);
         const left = nodes.shift();
@@ -227,20 +249,6 @@ function huffmanEncode(data, codes) {
     });
     return encoded;
 }
-function getImageDataFromImage(idOrElement) {
-    var theImg = (typeof (idOrElement) == 'string') ? document.getElementById(idOrElement) : idOrElement;
-    var cvs = document.createElement('canvas');
-    if (theImg instanceof HTMLImageElement) {
-        cvs.width = theImg.width;
-        cvs.height = theImg.height;
-        var ctx = cvs.getContext("2d");
-        if (ctx) {
-            ctx.drawImage(theImg, 0, 0);
-            return (ctx.getImageData(0, 0, cvs.width, cvs.height));
-        }
-    }
-    return null;
-}
 function encodeJPEG(imageData) {
     let image = {
         width: imageData.width,
@@ -276,28 +284,25 @@ function encodeJPEG(imageData) {
     });
     cbMatrix = resizeBlock(cbMatrix);
     crMatrix = resizeBlock(crMatrix);
-    // Process Y blocks
     let yBlocks = createBlocks(yMatrix).map(block => {
-        const dctBlock = dct(block.pixels);
-        const quantizedBlock = quantizeDCT(dctBlock);
+        const dctBlock = dct(block);
+        const quantizedBlock = quantizeDCT(dctBlock, true);
+        (0, jpeg_decoder_1.showMatrix)(quantizedBlock);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);
     });
-    // Process Cb blocks
     let cbBlocks = createBlocks(cbMatrix).map(block => {
-        const dctBlock = dct(block.pixels);
-        const quantizedBlock = quantizeDCT(dctBlock);
+        const dctBlock = dct(block);
+        const quantizedBlock = quantizeDCT(dctBlock, false);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);
     });
-    // Process Cr blocks
     let crBlocks = createBlocks(crMatrix).map(block => {
-        const dctBlock = dct(block.pixels);
-        const quantizedBlock = quantizeDCT(dctBlock);
+        const dctBlock = dct(block);
+        const quantizedBlock = quantizeDCT(dctBlock, false);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);
     });
-    // Generate Huffman codes for each channel
     const yFrequencyTable = buildFrequencyTable(yBlocks.flat());
     const cbFrequencyTable = buildFrequencyTable(cbBlocks.flat());
     const crFrequencyTable = buildFrequencyTable(crBlocks.flat());
@@ -307,7 +312,6 @@ function encodeJPEG(imageData) {
     const yHuffmanCodes = generateHuffmanCodes(yHuffmanTree);
     const cbHuffmanCodes = generateHuffmanCodes(cbHuffmanTree);
     const crHuffmanCodes = generateHuffmanCodes(crHuffmanTree);
-    // Encode each block using Huffman coding
     const encodedYBlocks = yBlocks.map(block => huffmanEncode(block, yHuffmanCodes));
     const encodedCbBlocks = cbBlocks.map(block => huffmanEncode(block, cbHuffmanCodes));
     const encodedCrBlocks = crBlocks.map(block => huffmanEncode(block, crHuffmanCodes));
@@ -322,9 +326,22 @@ function encodeJPEG(imageData) {
         crHuffmanCodes
     };
 }
+function getImageDataFromImage(idOrElement) {
+    var theImg = (typeof (idOrElement) == 'string') ? document.getElementById(idOrElement) : idOrElement;
+    var cvs = document.createElement('canvas');
+    if (theImg instanceof HTMLImageElement) {
+        cvs.width = theImg.width;
+        cvs.height = theImg.height;
+        var ctx = cvs.getContext("2d");
+        if (ctx) {
+            ctx.drawImage(theImg, 0, 0);
+            return (ctx.getImageData(0, 0, cvs.width, cvs.height));
+        }
+    }
+    return null;
+}
 function readFile(path) {
     const file = fs_1.default.readFileSync(path, 'utf8');
     return JSON.parse(file);
 }
-'';
 console.log((0, jpeg_decoder_1.decodeJPEG)(encodeJPEG(readFile('../files/temp_small.json'))));

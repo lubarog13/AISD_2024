@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {decodeJPEG} from "./jpeg_decoder";
+import {decodeJPEG, showMatrix} from "./jpeg_decoder";
 
 export type Pixel = {
     r: number;
@@ -122,20 +122,21 @@ function resizeImage(image: Image): Image {
     return image;
 }
 
-function createBlocks(matrix: number[][]): Block[] {
-    const blocks: Block[] = [];
-    let x = 0;
-    let y = 0;
-    for (let i=0; i<matrix.length; i+=8) {
-        for (let j=0; j<matrix[i].length; j+=8) {
-            blocks.push({x: x, y: y, pixels: matrix.slice(i, i+8).map(row => row.slice(j, j+8))});
-            y ++;
+function createBlocks(matrix: number[][]): number[][][] {
+    const blocks: number[][][] = [];
+    for (let i = 0; i < matrix.length; i += 8) {
+        for (let j = 0; j < matrix[i].length; j += 8) {
+            const block: number[][] = [];
+            for (let x = 0; x < 8; x++) {
+                const row: number[] = matrix[i + x].slice(j, j + 8);
+                block.push(row);
+            }
+            blocks.push(block);
         }
-        x ++;
-        y = 0;
     }
     return blocks;
 }
+
 
 function dct(block: number[][]): number[][] {
     const N = 8;
@@ -169,7 +170,7 @@ function quantizeDCT(block: number[][], isY: boolean): number[][] {
     const result: number[][] = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = Math.round(block[i][j] / (isY ? YQ[i][j] : UVQ[i][j]));
+            result[i][j] = Math.round(block[i][j] * 255 / (isY ? YQ[i][j] : UVQ[i][j]));
         }
     }
     return result;
@@ -305,11 +306,11 @@ export function encodeJPEG(imageData: ImageData) {
         image.pixels.push([]);
         for (let j=0; j<imageData.width * 4; j+=4) {
             const pixel: Pixel = {
-                r: imageData.data[i*imageData.width + j],
-                g: imageData.data[i*imageData.width + j + 1],
-                b: imageData.data[i*imageData.width + j + 2]
+                r: imageData.data[i*imageData.width*4 + j],
+                g: imageData.data[i*imageData.width*4 + j + 1],
+                b: imageData.data[i*imageData.width*4 + j + 2]
             }
-            image.pixels[i].push(rgbaToRgb(pixel, imageData.data[i*imageData.width + j + 3] / 255));
+            image.pixels[i].push(rgbaToRgb(pixel, imageData.data[i*imageData.width*4 + j + 3] / 255));
         }
     }
     image = resizeImage(image);
@@ -332,22 +333,23 @@ export function encodeJPEG(imageData: ImageData) {
 
 
     let yBlocks = createBlocks(yMatrix).map(block => {
-        const dctBlock = dct(block.pixels);
+        const dctBlock = dct(block);
         const quantizedBlock = quantizeDCT(dctBlock, true);
+        showMatrix(quantizedBlock);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);
     });
 
 
     let cbBlocks = createBlocks(cbMatrix).map(block => {
-        const dctBlock = dct(block.pixels);
+        const dctBlock = dct(block);
         const quantizedBlock = quantizeDCT(dctBlock, false);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);
     });
 
     let crBlocks = createBlocks(crMatrix).map(block => {
-        const dctBlock = dct(block.pixels);
+        const dctBlock = dct(block);
         const quantizedBlock = quantizeDCT(dctBlock, false);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);

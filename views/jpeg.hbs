@@ -10,6 +10,11 @@
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
             crossorigin="anonymous"
         />
+        <style>
+            table {
+                margin-bottom: 30px;
+            }
+        </style>
     </head>
     <body>
     <nav class="navbar fixed-top navbar-dark bg-dark">
@@ -42,16 +47,17 @@
     <script src="/files/scripts/jpeg_encoder.js"></script>
     <script src="/files/scripts/jpeg_decoder.js"></script>
     <script>
-        var jpeg_encoder_1 = exports;
         document.addEventListener('DOMContentLoaded', () => {
             console.log(exports)
             const image = document.querySelector('#image');
             console.log(image);
             let imageData = getImageDataFromImage(image);
 
+            console.log(imageData);
+
             let encodedData = encodeJPEG(imageData);
                 let decodedData = decodeJPEG(encodedData);
-                imageDataToImage(decodedData);
+                imageDataToImage(decodedData, '.compressed-image');
         })
     </script>
 </html>

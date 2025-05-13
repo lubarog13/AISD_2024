@@ -8,7 +8,7 @@ class ImageDataLocal {
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.data = new Uint8Array(new ArrayBuffer(this.width * this.height))
+        this.data = new Uint8Array(new ArrayBuffer(this.width * this.height * 4));
     }
 }
 
@@ -67,7 +67,7 @@ function inverseQuantizeDCT(block: number[][], isY: boolean): number[][] {
     const result: number[][] = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = block[i][j] * (isY ? YQ[i][j] : UVQ[i][j]);
+            result[i][j] = block[i][j] / 255 * (isY ? YQ[i][j] : UVQ[i][j]);
         }
     }
     return result;
@@ -109,6 +109,7 @@ function yCbCrToRGB(yCbCr: YCbCr): Pixel {
 }
 
 function reconstructBlock(block: number[][], isY: boolean): number[][] {
+    showMatrix(block)
     const quantized = inverseQuantizeDCT(block, isY);
     return inverseDCT(quantized);
 }
@@ -117,12 +118,13 @@ function resizeBlockTo16x16(block: number[][]): number[][] {
     const result_prev = Array(8).fill(0).map(() => Array(16).fill(0));
     let x = 0, y = 0;
     for (let i = 0; i < 8; i ++) {
+        y = 0;
         for (let j = 0; j < 16; j += 2) {
             result_prev[i][j] = block[x][y];
             if (y < 7)
-                result_prev[i][j + 1] = Math.floor((block[x][y] + block[x][y + 1]) / 2);
+                result_prev[i][j + 1] = (block[i][y] + block[i][y + 1]) / 2;
             else
-                result_prev[i][j + 1] = block[x][y];
+                result_prev[i][j + 1] = block[i][y];
             y++;
         }
     }
@@ -133,7 +135,7 @@ function resizeBlockTo16x16(block: number[][]): number[][] {
         }
         for (let j = 0; j < 16; j++) {
             if (x < 7)
-                result[i + 1][j] = Math.floor((result[i][j] + result_prev[x + 1][j]) / 2);
+                result[i + 1][j] = (result[i][j] + result_prev[x + 1][j]) / 2;
             else
                 result[i + 1][j] = result[i][j];
         }
@@ -144,15 +146,16 @@ function resizeBlockTo16x16(block: number[][]): number[][] {
 
 function joinBlocksToMatrix(blocks: number[][][], width: number, height: number, blockSize: number): number[][] {
     const matrix: number[][] = Array(height).fill(0).map(() => Array(width).fill(0));
-    const blocksPerRow = width / blockSize;
-    const blocksPerCol = height / blockSize;
+    let blockIndex = 0;
 
-    for (let blockRow = 0; blockRow < blocksPerCol; blockRow++) {
-        for (let blockCol = 0; blockCol < blocksPerRow; blockCol++) {
-            const block = blocks[blockRow * blocksPerRow + blockCol];
-            for (let i = 0; i < blockSize; i++) {
-                for (let j = 0; j < blockSize; j++) {
-                    matrix[blockRow * blockSize + i][blockCol * blockSize + j] = block[i][j];
+    for (let i = 0; i < height; i += blockSize) {
+        for (let j = 0; j < width; j += blockSize) {
+            const block = blocks[blockIndex++];
+            for (let x = 0; x < blockSize; x++) {
+                for (let y = 0; y < blockSize; y++) {
+                    if (i + x < height && j + y < width) {
+                        matrix[i + x][j + y] = block[x][y];
+                    }
                 }
             }
         }
@@ -201,7 +204,6 @@ export function decodeJPEG(encodedData: {
     const reconstructedCbMatrix = joinBlocksToMatrix(reconstructedCbBlocks.map(resizeBlockTo16x16), encodedData.width, encodedData.height, 16);
     const reconstructedCrMatrix = joinBlocksToMatrix(reconstructedCrBlocks.map(resizeBlockTo16x16), encodedData.width, encodedData.height, 16);
 
-
     for (let i=0; i<encodedData.height; i++) {
         for (let j=0; j<encodedData.width; j++) {
             const yCbCr: YCbCr = {
@@ -210,7 +212,7 @@ export function decodeJPEG(encodedData: {
                 cr: reconstructedCrMatrix[i][j]
             };
             const rgb = yCbCrToRGB(yCbCr);
-            const pixelIndex = (i * encodedData.height + j) * 4;
+            const pixelIndex = (i * encodedData.width + j) * 4;
             data[pixelIndex] = rgb.r;
             data[pixelIndex + 1] = rgb.g;
             data[pixelIndex + 2] = rgb.b;
@@ -221,7 +223,21 @@ export function decodeJPEG(encodedData: {
     return imageData;
 }
 
-export function imageDataToImage(imageDataLocal: ImageDataLocal) {
+export function showMatrix(matrix: number[][]) {
+    const table = document.createElement('table');
+    for (let i = 0; i < matrix.length; i++) {
+        const row = document.createElement('tr');
+        for (let j = 0; j < matrix[i].length; j++) {
+            const cell = document.createElement('td');
+            cell.textContent = matrix[i][j].toString();
+            row.appendChild(cell);
+        }
+        table.appendChild(row);
+    }
+    document.body.appendChild(table);
+}
+
+export function imageDataToImage(imageDataLocal: ImageDataLocal, className: string) {
         const imageData = new ImageData(imageDataLocal.width, imageDataLocal.height);
         imageData.data.set(imageDataLocal.data); 
         
@@ -234,7 +250,7 @@ export function imageDataToImage(imageDataLocal: ImageDataLocal) {
             ctx.putImageData( imageData, 0, 0 );
         }
 
-        const image = document.querySelector('.compressed-image') as HTMLImageElement;
+        const image = document.querySelector(className) as HTMLImageElement;
         if (image) {
             image.src = canvas.toDataURL();
         }
