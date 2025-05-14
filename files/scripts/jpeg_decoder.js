@@ -59,7 +59,7 @@ function inverseQuantizeDCT(block, isY) {
     const result = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = block[i][j] / 255 * (isY ? exports.YQ[i][j] : exports.UVQ[i][j]);
+            result[i][j] = block[i][j] * (isY ? exports.YQ[i][j] : exports.UVQ[i][j]);
         }
     }
     return result;
@@ -167,7 +167,6 @@ function decodeJPEG(encodedData) {
     const reconstructedYMatrix = joinBlocksToMatrix(reconstructedYBlocks, encodedData.width, encodedData.height, 8);
     const reconstructedCbMatrix = joinBlocksToMatrix(reconstructedCbBlocks.map(resizeBlockTo16x16), encodedData.width, encodedData.height, 16);
     const reconstructedCrMatrix = joinBlocksToMatrix(reconstructedCrBlocks.map(resizeBlockTo16x16), encodedData.width, encodedData.height, 16);
-    
     for (let i = 0; i < encodedData.height; i++) {
         for (let j = 0; j < encodedData.width; j++) {
             const yCbCr = {
@@ -183,7 +182,6 @@ function decodeJPEG(encodedData) {
             data[pixelIndex + 3] = 255;
         }
     }
-    console.log(imageData.data)
     return imageData;
 }
 function showMatrix(matrix) {

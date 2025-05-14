@@ -67,7 +67,7 @@ function inverseQuantizeDCT(block: number[][], isY: boolean): number[][] {
     const result: number[][] = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = block[i][j] / 255 * (isY ? YQ[i][j] : UVQ[i][j]);
+            result[i][j] = block[i][j] * (isY ? YQ[i][j] : UVQ[i][j]);
         }
     }
     return result;
@@ -109,7 +109,6 @@ function yCbCrToRGB(yCbCr: YCbCr): Pixel {
 }
 
 function reconstructBlock(block: number[][], isY: boolean): number[][] {
-    showMatrix(block)
     const quantized = inverseQuantizeDCT(block, isY);
     return inverseDCT(quantized);
 }

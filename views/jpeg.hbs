@@ -15,7 +15,23 @@
                 margin-bottom: 30px;
             }
         </style>
-    </head>
+        <script>var exports = {};</script>
+        <script src="/files/scripts/jpeg_encoder.js"></script>
+        <script src="/files/scripts/jpeg_decoder.js"></script>
+        <script>
+            function checkImageLoaded() {
+                var img = document.getElementById("image");
+                if (img.complete) {
+                    let imageData = getImageDataFromImage(image);
+                let encodedData = encodeJPEG(imageData);
+                    let decodedData = decodeJPEG(encodedData);
+                    imageDataToImage(decodedData, '.compressed-image');
+                } else {
+                    setTimeout(checkImageLoaded, 50); 
+                }
+            }
+        </script>
+        </head>
     <body>
     <nav class="navbar fixed-top navbar-dark bg-dark">
         <a class="navbar-brand mr-auto" href="#">АИСД ЛР1</a>
@@ -31,7 +47,7 @@
                 <div class="row">
                     <div class="col-sm">
                         <h2>Исходное изображение</h2>
-                        <img id="image" src="/files/images/sport-icon.png" alt="Image">
+                        <img id="image" onload="checkImageLoaded()" src="/files/images/sport-icon.png" alt="Image">
                     </div>
                 </div>
                 <div class="row">
@@ -43,21 +59,4 @@
             </div>
         </main>
     </body>
-    <script>var exports = {};</script>
-    <script src="/files/scripts/jpeg_encoder.js"></script>
-    <script src="/files/scripts/jpeg_decoder.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log(exports)
-            const image = document.querySelector('#image');
-            console.log(image);
-            let imageData = getImageDataFromImage(image);
-
-            console.log(imageData);
-
-            let encodedData = encodeJPEG(imageData);
-                let decodedData = decodeJPEG(encodedData);
-                imageDataToImage(decodedData, '.compressed-image');
-        })
-    </script>
 </html>

@@ -1,7 +1,5 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+// import fs from 'fs';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UVQ = exports.YQ = exports.ZigZag = void 0;
 exports.encodeJPEG = encodeJPEG;
@@ -93,23 +91,6 @@ function createBlocks(matrix) {
     }
     return blocks;
 }
-function mergeBlocks(blocks, width, height) {
-    const matrix = Array(height).fill(0).map(() => Array(width).fill(0));
-    let blockIndex = 0;
-    for (let i = 0; i < height; i += 8) {
-        for (let j = 0; j < width; j += 8) {
-            const block = blocks[blockIndex++];
-            for (let x = 0; x < 8; x++) {
-                for (let y = 0; y < 8; y++) {
-                    if (i + x < height && j + y < width) {
-                        matrix[i + x][j + y] = block[x][y];
-                    }
-                }
-            }
-        }
-    }
-    return matrix;
-}
 function dct(block) {
     const N = 8;
     const result = Array(N).fill(0).map(() => Array(N).fill(0));
@@ -121,13 +102,7 @@ function dct(block) {
                 for (let y = 0; y < N; y++) {
                     const cos1 = Math.cos((2 * x + 1) * u * Math.PI / (2 * N));
                     const cos2 = Math.cos((2 * y + 1) * v * Math.PI / (2 * N));
-                    try {
-                        sum += block[x][y] * cos1 * cos2;
-                    }
-                    catch (e) {
-                        console.log(block);
-                        throw new Error("Вот тут");
-                    }
+                    sum += block[x][y] * cos1 * cos2;
                 }
             }
             result[u][v] = alpha(u) * alpha(v) * sum;
@@ -139,7 +114,7 @@ function quantizeDCT(block, isY) {
     const result = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = Math.round(block[i][j] * 255 / (isY ? exports.YQ[i][j] : exports.UVQ[i][j]));
+            result[i][j] = Math.round(block[i][j] / (isY ? exports.YQ[i][j] : exports.UVQ[i][j]));
         }
     }
     return result;
@@ -253,7 +228,6 @@ function encodeJPEG(imageData) {
         height: imageData.height,
         pixels: []
     };
-    console.log(imageData.width, imageData.height, Object.keys(imageData.data).length, Object.keys(imageData.data).length / (imageData.width * imageData.height));
     for (let i = 0; i < imageData.height; i++) {
         image.pixels.push([]);
         for (let j = 0; j < imageData.width * 4; j += 4) {
@@ -262,20 +236,9 @@ function encodeJPEG(imageData) {
                 g: imageData.data[i * imageData.width * 4 + j + 1],
                 b: imageData.data[i * imageData.width * 4 + j + 2]
             };
-            image.pixels[i].push(rgbaToRgb(pixel, imageData.data[i * imageData.width + j + 3] / 255));
+            image.pixels[i].push(rgbaToRgb(pixel, imageData.data[i * imageData.width * 4 + j + 3] / 255));
         }
     }
-    let temp = []
-    for (let i=0; i<image.height; i++) {
-        for (let j=0; j<image.width; j++) {
-            const pixelIndex = (i * imageData.width + j) * 4;
-            temp[pixelIndex] = image.pixels[i][j].r;
-            temp[pixelIndex + 1] = image.pixels[i][j].g;
-            temp[pixelIndex + 2] = image.pixels[i][j].b;
-            temp[pixelIndex + 3] = 255;
-        }
-    }
-    console.log(temp)
     image = resizeImage(image);
     let yMatrix = [];
     let cbMatrix = [];
@@ -348,7 +311,7 @@ function getImageDataFromImage(idOrElement) {
     }
     return null;
 }
-function readFile(path) {
-    const file = fs_1.default.readFileSync(path, 'utf8');
-    return JSON.parse(file);
-}
+// function readFile(path: string) {
+//     const file = fs.readFileSync(path, 'utf8');
+//     return JSON.parse(file);
+// }

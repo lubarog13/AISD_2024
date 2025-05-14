@@ -60,7 +60,7 @@ function inverseQuantizeDCT(block, isY) {
     const result = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = block[i][j] / 255 * (isY ? jpeg_encoder_1.YQ[i][j] : jpeg_encoder_1.UVQ[i][j]);
+            result[i][j] = block[i][j] * (isY ? jpeg_encoder_1.YQ[i][j] : jpeg_encoder_1.UVQ[i][j]);
         }
     }
     return result;
@@ -95,7 +95,6 @@ function yCbCrToRGB(yCbCr) {
     };
 }
 function reconstructBlock(block, isY) {
-    showMatrix(block);
     const quantized = inverseQuantizeDCT(block, isY);
     return inverseDCT(quantized);
 }

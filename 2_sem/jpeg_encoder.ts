@@ -1,5 +1,4 @@
-import fs from 'fs';
-import {decodeJPEG, showMatrix} from "./jpeg_decoder";
+// import fs from 'fs';
 
 export type Pixel = {
     r: number;
@@ -151,12 +150,7 @@ function dct(block: number[][]): number[][] {
                 for (let y = 0; y < N; y++) {
                     const cos1 = Math.cos((2 * x + 1) * u * Math.PI / (2 * N));
                     const cos2 = Math.cos((2 * y + 1) * v * Math.PI / (2 * N));
-                    try {
-                        sum += block[x][y] * cos1 * cos2;
-                    } catch (e) {
-                        console.log(block);
-                        throw new Error("Вот тут")
-                    }
+                    sum += block[x][y] * cos1 * cos2;
                 }
             }
             result[u][v] = alpha(u) * alpha(v) * sum;
@@ -170,7 +164,7 @@ function quantizeDCT(block: number[][], isY: boolean): number[][] {
     const result: number[][] = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = Math.round(block[i][j] * 255 / (isY ? YQ[i][j] : UVQ[i][j]));
+            result[i][j] = Math.round(block[i][j] / (isY ? YQ[i][j] : UVQ[i][j]));
         }
     }
     return result;
@@ -301,7 +295,6 @@ export function encodeJPEG(imageData: ImageData) {
         height: imageData.height,
         pixels: []
     }
-    console.log(imageData.width, imageData.height, Object.keys(imageData.data).length, Object.keys(imageData.data).length / (imageData.width * imageData.height))
     for (let i=0; i<imageData.height; i++) {
         image.pixels.push([]);
         for (let j=0; j<imageData.width * 4; j+=4) {
@@ -335,7 +328,6 @@ export function encodeJPEG(imageData: ImageData) {
     let yBlocks = createBlocks(yMatrix).map(block => {
         const dctBlock = dct(block);
         const quantizedBlock = quantizeDCT(dctBlock, true);
-        showMatrix(quantizedBlock);
         const zigzagBlock = zigzag(quantizedBlock);
         return runLengthEncode(zigzagBlock);
     });
@@ -401,8 +393,7 @@ export function getImageDataFromImage(idOrElement: string | HTMLImageElement) {
     return null;
 }
 
-function readFile(path: string) {
-    const file = fs.readFileSync(path, 'utf8');
-    return JSON.parse(file);
-}
-console.log(decodeJPEG(encodeJPEG(readFile('../files/temp_small.json'))))
+// function readFile(path: string) {
+//     const file = fs.readFileSync(path, 'utf8');
+//     return JSON.parse(file);
+// }
