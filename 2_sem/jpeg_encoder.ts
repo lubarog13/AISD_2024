@@ -1,5 +1,16 @@
 // import fs from 'fs';
 
+export type EncodedData = {
+    width: number;
+    height: number;
+    yBlocks: string[];
+    cbBlocks: string[];
+    crBlocks: string[];
+    yHuffmanCodes: HuffmanCode[];
+    cbHuffmanCodes: HuffmanCode[];
+    crHuffmanCodes: HuffmanCode[];
+}
+
 export type Pixel = {
     r: number;
     g: number;
@@ -289,7 +300,7 @@ function huffmanEncode(data: RunLengthPair[], codes: HuffmanCode[]): string {
     return encoded;
 }
 
-export function encodeJPEG(imageData: ImageData) {
+export function encodeJPEG(imageData: ImageData): EncodedData {
     let image: Image = {
         width: imageData.width,
         height: imageData.height,
@@ -391,6 +402,26 @@ export function getImageDataFromImage(idOrElement: string | HTMLImageElement) {
         }
     }
     return null;
+}
+
+function calculateEncodedSize(encodedData: EncodedData): number {
+    let dataSize = encodedData.yBlocks.reduce((acc, block) => acc + block.length, 0) +
+           encodedData.cbBlocks.reduce((acc, block) => acc + block.length, 0) +
+           encodedData.crBlocks.reduce((acc, block) => acc + block.length, 0);
+    dataSize += encodedData.yHuffmanCodes.reduce((acc, code) => acc + code.code.length, 0);
+    dataSize += encodedData.cbHuffmanCodes.reduce((acc, code) => acc + code.code.length, 0);
+    dataSize += encodedData.crHuffmanCodes.reduce((acc, code) => acc + code.code.length, 0);
+    dataSize += Object.keys(encodedData.yHuffmanCodes).length;
+    dataSize += Object.keys(encodedData.cbHuffmanCodes).length;
+    dataSize += Object.keys(encodedData.crHuffmanCodes).length;
+    dataSize += 9;
+    return dataSize;
+}
+
+function calculateCompressionRatio(encodedData: EncodedData, imageData: ImageData): string {
+    const encodedSize = calculateEncodedSize(encodedData);
+    const imageSize = imageData.data.length;
+    return (imageSize / encodedSize * 100).toFixed(3);
 }
 
 // function readFile(path: string) {

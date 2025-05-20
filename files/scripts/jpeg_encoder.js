@@ -311,6 +311,24 @@ function getImageDataFromImage(idOrElement) {
     }
     return null;
 }
+function calculateEncodedSize(encodedData) {
+    let dataSize = encodedData.yBlocks.reduce((acc, block) => acc + block.length, 0) +
+        encodedData.cbBlocks.reduce((acc, block) => acc + block.length, 0) +
+        encodedData.crBlocks.reduce((acc, block) => acc + block.length, 0);
+    dataSize += encodedData.yHuffmanCodes.reduce((acc, code) => acc + code.code.length, 0);
+    dataSize += encodedData.cbHuffmanCodes.reduce((acc, code) => acc + code.code.length, 0);
+    dataSize += encodedData.crHuffmanCodes.reduce((acc, code) => acc + code.code.length, 0);
+    dataSize += Object.keys(encodedData.yHuffmanCodes).length;
+    dataSize += Object.keys(encodedData.cbHuffmanCodes).length;
+    dataSize += Object.keys(encodedData.crHuffmanCodes).length;
+    dataSize += 9;
+    return dataSize;
+}
+function calculateCompressionRatio(encodedData, imageData) {
+    const encodedSize = calculateEncodedSize(encodedData);
+    const imageSize = imageData.data.length;
+    return (imageSize / encodedSize * 100).toFixed(3);
+}
 // function readFile(path: string) {
 //     const file = fs.readFileSync(path, 'utf8');
 //     return JSON.parse(file);

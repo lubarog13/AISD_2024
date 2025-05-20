@@ -19,22 +19,33 @@
         <script src="/files/scripts/jpeg_encoder.js"></script>
         <script src="/files/scripts/jpeg_decoder.js"></script>
         <script>
-            function checkImageLoaded() {
-                var img = document.getElementById("image");
+            function checkImageLoaded(imageId, compressionRatioId, compressedImageClass) {
+                var img = document.getElementById(imageId);
                 if (img.complete) {
-                    let imageData = getImageDataFromImage(image);
-                let encodedData = encodeJPEG(imageData);
+                    let imageData = getImageDataFromImage(document.getElementById(imageId));
+                    console.log('1', imageId, imageData.data.length);
+                    let encodedData = encodeJPEG(imageData);
+                    console.log('2', imageId, calculateEncodedSize(encodedData));
+                    document.getElementById(compressionRatioId).innerHTML = calculateCompressionRatio(encodedData, imageData) + '%';
+
                     let decodedData = decodeJPEG(encodedData);
-                    imageDataToImage(decodedData, '.compressed-image');
+                    imageDataToImage(decodedData, compressedImageClass);
+                    console.log('3', imageId, decodedData.data.length);
                 } else {
                     setTimeout(checkImageLoaded, 50); 
                 }
             }
         </script>
+        <style>
+            .row {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        </style>
         </head>
     <body>
     <nav class="navbar fixed-top navbar-dark bg-dark">
-        <a class="navbar-brand mr-auto" href="#">АИСД ЛР1</a>
+        <a class="navbar-brand mr-auto" href="#">АИСД ЛР2</a>
         <ul class="navbar-nav">
             <li class="nav-item active">
                 <a class="nav-link" href="#">Рогозина Л.А. 2321 </a>
@@ -46,14 +57,44 @@
                 <h1 class="mt-5 mb-4">Сжатие JPEG</h1>
                 <div class="row">
                     <div class="col-sm">
-                        <h2>Исходное изображение</h2>
-                        <img id="image" onload="checkImageLoaded()" src="/files/images/sport-icon.png" alt="Image">
+                        <h2>Исходные изображения 1</h2>
+                        <img id="image1" onload="checkImageLoaded('image1', 'compression-ratio1', '.compressed-image1')" src="/files/images/sport-icon.png" alt="Image">
+                    </div>
+                    <div class="col-sm">
+                        <h2>2</h2>
+                        <img id="image2" onload="checkImageLoaded('image2', 'compression-ratio2', '.compressed-image2')" src="/files/images/tityl.png" alt="Image">
+                    </div>
+                    <div class="col-sm">
+                        <h2>3</h2>
+                        <img id="image3" onload="checkImageLoaded('image3', 'compression-ratio3', '.compressed-image3')" src="/files/images/plus.png" alt="Image">
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mt-5">
                     <div class="col-sm">
-                        <h2>Сжатое изображение</h2>
-                        <img class="compressed-image" src="" alt="Image">
+                        <h2>Сжатые изображения 1</h2>
+                        <img class="compressed-image1" src="" alt="Image">
+                    </div>
+                    <div class="col-sm">
+                        <h2>2</h2>
+                        <img class="compressed-image2" src="" alt="Image">
+                    </div>
+                    <div class="col-sm">
+                        <h2>3</h2>
+                        <img class="compressed-image3" src="" alt="Image">
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-sm">
+                        <h2>Коэффициенты сжатия 1</h2>
+                        <p id="compression-ratio1"></p>
+                    </div>
+                    <div class="col-sm">
+                        <h2>2</h2>
+                        <p id="compression-ratio2"></p>
+                    </div>
+                    <div class="col-sm">
+                        <h2>3</h2>
+                        <p id="compression-ratio3"></p>
                     </div>
                 </div>
             </div>
