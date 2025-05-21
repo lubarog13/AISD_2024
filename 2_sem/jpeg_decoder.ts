@@ -1,4 +1,4 @@
-import {HuffmanCode, Pixel, YQ, UVQ, RunLengthPair, YCbCr, ZigZag} from "./jpeg_encoder";
+import {HuffmanCode, Pixel, YQ, UVQ, RunLengthPair, YCbCr, ZigZag, getQ} from "./jpeg_encoder";
 
 class ImageDataLocal {
     width: number;
@@ -67,7 +67,7 @@ function inverseQuantizeDCT(block: number[][], isY: boolean): number[][] {
     const result: number[][] = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = block[i][j] * (isY ? YQ[i][j] : UVQ[i][j]);
+            result[i][j] = block[i][j] * (isY ? getQ(YQ[i][j]) : getQ(UVQ[i][j]));
         }
     }
     return result;

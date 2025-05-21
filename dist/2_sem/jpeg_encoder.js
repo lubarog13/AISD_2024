@@ -1,7 +1,9 @@
 "use strict";
 // import fs from 'fs';
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UVQ = exports.YQ = exports.ZigZag = void 0;
+exports.UVQ = exports.YQ = exports.Q = exports.ZigZag = void 0;
+exports.getScale = getScale;
+exports.getQ = getQ;
 exports.encodeJPEG = encodeJPEG;
 exports.getImageDataFromImage = getImageDataFromImage;
 exports.ZigZag = [
@@ -14,6 +16,7 @@ exports.ZigZag = [
     [21, 34, 37, 47, 50, 56, 59, 61],
     [35, 36, 48, 49, 57, 58, 62, 63]
 ];
+exports.Q = 100;
 exports.YQ = [
     [16, 11, 10, 16, 24, 40, 51, 61],
     [12, 12, 14, 19, 26, 58, 60, 55],
@@ -110,11 +113,22 @@ function dct(block) {
     }
     return result;
 }
+function getScale() {
+    if (exports.Q < 50) {
+        return 5000 / exports.Q;
+    }
+    else {
+        return 200 - 2 * exports.Q;
+    }
+}
+function getQ(element) {
+    return Math.floor((getScale() * element + 50) / 100);
+}
 function quantizeDCT(block, isY) {
     const result = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = Math.round(block[i][j] / (isY ? exports.YQ[i][j] : exports.UVQ[i][j]));
+            result[i][j] = Math.round(block[i][j] / (isY ? getQ(exports.YQ[i][j]) : getQ(exports.UVQ[i][j])));
         }
     }
     return result;

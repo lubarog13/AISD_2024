@@ -59,7 +59,7 @@ function inverseQuantizeDCT(block, isY) {
     const result = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = block[i][j] * (isY ? exports.YQ[i][j] : exports.UVQ[i][j]);
+            result[i][j] = block[i][j] * (isY ? (0, exports.getQ)(exports.YQ[i][j]) : (0, exports.getQ)(exports.UVQ[i][j]));
         }
     }
     return result;

@@ -62,6 +62,7 @@ export const ZigZag = [
    [21,34,37,47,50,56,59,61],
    [35,36,48,49,57,58,62,63]
 ];
+export const Q = 100;
 
 export const YQ = [
     [16, 11, 10, 16, 24, 40, 51, 61],
@@ -171,11 +172,23 @@ function dct(block: number[][]): number[][] {
     return result;
 }
 
+export function getScale(): number {
+    if (Q < 50) {
+        return 5000 / Q;
+    } else {
+        return 200 - 2 * Q;
+    }
+}
+
+export function getQ(element: number): number {
+    return Math.round((getScale() * element + 50) / 100);
+}
+
 function quantizeDCT(block: number[][], isY: boolean): number[][] {
     const result: number[][] = Array(8).fill(0).map(() => Array(8).fill(0));
     for (let i = 0; i < 8; i++) {
         for (let j = 0; j < 8; j++) {
-            result[i][j] = Math.round(block[i][j] / (isY ? YQ[i][j] : UVQ[i][j]));
+            result[i][j] = Math.round(block[i][j] / (isY ? getQ(YQ[i][j]) : getQ(UVQ[i][j])));
         }
     }
     return result;
